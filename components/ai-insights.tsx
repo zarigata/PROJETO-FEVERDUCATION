@@ -1,106 +1,51 @@
 "use client"
 
+/**
+ * /////////////////////////////////////////////////////////////////////////////
+ * //                                                                         //
+ * //  [FEVERDUCATION] - AI Insights Component                                //
+ * //  ---------------------------------------------------------------        //
+ * //  This component connects to our AI backend to generate educational      //
+ * //  insights about student performance and teaching effectiveness.         //
+ * //                                                                         //
+ * //  CODEX LEVEL: ALPHA-7                                                   //
+ * //  VERSION: 1.0.0                                                         //
+ * //  PLATFORM: CROSS-COMPATIBLE (WIN/LINUX)                                 //
+ * //                                                                         //
+ * /////////////////////////////////////////////////////////////////////////////
+ */
+
 import { useState } from "react"
 import { Sparkles, X, AlertTriangle, TrendingUp, TrendingDown, Lightbulb } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-
-interface InsightItem {
-  type: "success" | "warning" | "info"
-  title: string
-  description: string
-  metric?: {
-    label: string
-    value: string
-    trend: "up" | "down" | "neutral"
-    change: string
-  }
-  action?: {
-    label: string
-    onClick: () => void
-  }
-}
+import { useAI, InsightItem } from "@/hooks/use-ai"
+import { cn } from "@/lib/utils"
 
 export function AIInsights() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [insights, setInsights] = useState<InsightItem[]>([])
-
-  const generateInsights = () => {
-    setIsLoading(true)
-
-    // Simulate AI generating insights
-    setTimeout(() => {
-      setInsights([
-        {
-          type: "warning",
-          title: "Declining Participation in Chemistry",
-          description:
-            "Student participation in Chemistry classes has decreased by 15% over the last month. This correlates with the introduction of the new Periodic Table unit.",
-          metric: {
-            label: "Participation Rate",
-            value: "76%",
-            trend: "down",
-            change: "-15%",
-          },
-          action: {
-            label: "View Detailed Report",
-            onClick: () => console.log("View Chemistry participation report"),
-          },
-        },
-        {
-          type: "success",
-          title: "Biology Performance Improving",
-          description:
-            "The interactive lessons on Photosynthesis have resulted in a 12% increase in test scores. Consider applying similar teaching methods to other subjects.",
-          metric: {
-            label: "Average Score",
-            value: "85%",
-            trend: "up",
-            change: "+12%",
-          },
-          action: {
-            label: "See Teaching Methods",
-            onClick: () => console.log("View successful teaching methods"),
-          },
-        },
-        {
-          type: "info",
-          title: "Student Engagement Pattern",
-          description:
-            "Data shows higher engagement in morning classes (before 11 AM) compared to afternoon sessions. Consider scheduling more challenging topics earlier in the day.",
-          metric: {
-            label: "Morning Engagement",
-            value: "92%",
-            trend: "up",
-            change: "+18% vs afternoon",
-          },
-          action: {
-            label: "View Schedule Analysis",
-            onClick: () => console.log("View schedule analysis"),
-          },
-        },
-        {
-          type: "warning",
-          title: "At-Risk Students Identified",
-          description:
-            "7 students are showing signs of falling behind, particularly in Mathematics. Early intervention is recommended.",
-          metric: {
-            label: "At-Risk Students",
-            value: "7",
-            trend: "up",
-            change: "+3 from last month",
-          },
-          action: {
-            label: "View Student List",
-            onClick: () => console.log("View at-risk students"),
-          },
-        },
-      ])
-      setIsLoading(false)
+  
+  // Use our AI hook for insights generation
+  const { 
+    insights, 
+    isLoadingInsights, 
+    error, 
+    getInsights 
+  } = useAI()
+  
+  const generateInsights = async () => {
+    // For demo purposes, we'll use a fixed teacher ID. In a real app, this would come from auth context
+    const teacherId = "00000000-0000-0000-0000-000000000001"
+    
+    const fetchedInsights = await getInsights({
+      teacherId,
+      timeframe: "month",
+      types: ["performance", "engagement", "attendance", "improvement"]
+    })
+    
+    if (fetchedInsights?.length > 0) {
       setIsOpen(true)
-    }, 1500)
+    }
   }
 
   const getTrendIcon = (trend: "up" | "down" | "neutral") => {
@@ -117,16 +62,26 @@ export function AIInsights() {
   }
 
   const getTypeBadge = (type: "success" | "warning" | "info") => {
-    if (type === "success") return <Badge className="bg-green-500">Positive Trend</Badge>
-    if (type === "warning") return <Badge className="bg-amber-500">Needs Attention</Badge>
-    if (type === "info") return <Badge className="bg-blue-500">Insight</Badge>
+    if (type === "success") return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-500 text-white">Positive Trend</span>
+    if (type === "warning") return <span className="px-2 py-1 text-xs font-medium rounded-full bg-amber-500 text-white">Needs Attention</span>
+    if (type === "info") return <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-500 text-white">Insight</span>
     return null
+  }
+
+  /**
+   * /////////////////////////////////////////////////////////
+   * // Handle action click based on actionType and targetId //
+   * /////////////////////////////////////////////////////////
+   */
+  const handleActionClick = (actionType: string, targetId: string) => {
+    console.log(`Action triggered: ${actionType} for target ${targetId}`)
+    // In a real application, this would navigate or open detailed views
   }
 
   return (
     <div className="relative">
-      <Button onClick={generateInsights} disabled={isLoading} variant="gradient" className="group">
-        {isLoading ? (
+      <Button onClick={generateInsights} disabled={isLoadingInsights} className="group bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">
+        {isLoadingInsights ? (
           <>
             <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
             Analyzing Data...
@@ -198,7 +153,7 @@ export function AIInsights() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={insight.action.onClick}
+                        onClick={() => handleActionClick(insight.action!.actionType, insight.action!.targetId)}
                         className="w-full justify-center"
                       >
                         {insight.action.label}
@@ -207,16 +162,22 @@ export function AIInsights() {
                   )}
                 </div>
               ))}
+              
+              {error && (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+                  <p className="font-medium">Error retrieving insights</p>
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+              
+              {insights.length === 0 && !isLoadingInsights && !error && (
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-700">
+                  <p className="font-medium">No insights available</p>
+                  <p className="text-sm">Try adjusting your filters or check back later for new insights.</p>
+                </div>
+              )}
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between border-t bg-muted/50 px-6 py-3">
-            <p className="text-xs text-muted-foreground">
-              Insights generated based on your teaching data and student performance metrics
-            </p>
-            <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
-              Close
-            </Button>
-          </CardFooter>
         </Card>
       )}
     </div>
