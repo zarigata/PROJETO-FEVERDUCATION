@@ -14,6 +14,7 @@ import {
   User,
   Users,
   Wand2,
+  Loader2,
 } from "lucide-react"
 import {
   Sidebar,
@@ -32,42 +33,72 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Logo } from "@/components/logo"
+import { LanguageSelector } from "@/components/language-selector"
+import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context"
+import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { t } = useLanguage()
+  const { profile, signOut } = useAuth()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { toast } = useToast()
 
   const isTeacherPath = pathname.startsWith("/teacher")
   const isStudentPath = pathname.startsWith("/student")
   const isActive = (path: string) => pathname === path
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await signOut()
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out",
+        variant: "success",
+      })
+    } catch (error) {
+      console.error("Logout error:", error)
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
   const teacherItems = [
     {
-      title: "Dashboard",
+      title: t("nav.dashboard"),
       icon: LayoutDashboard,
       url: "/teacher/dashboard",
     },
     {
-      title: "Classes",
+      title: t("nav.classes"),
       icon: BookOpen,
       url: "/teacher/classes",
     },
     {
-      title: "Students",
+      title: t("nav.students"),
       icon: Users,
       url: "/teacher/students",
     },
     {
-      title: "Class Generator",
+      title: t("nav.generator"),
       icon: Wand2,
       url: "/teacher/generator",
     },
     {
-      title: "Homework Builder",
+      title: t("nav.homework"),
       icon: PenTool,
       url: "/teacher/homework-builder",
     },
     {
-      title: "Settings",
+      title: t("nav.settings"),
       icon: Settings,
       url: "/teacher/settings",
     },
@@ -75,22 +106,22 @@ export function AppSidebar() {
 
   const studentItems = [
     {
-      title: "My Classes",
+      title: t("nav.myClasses"),
       icon: BookOpen,
       url: "/student/classes",
     },
     {
-      title: "Quizzes",
+      title: t("nav.quizzes"),
       icon: PenTool,
       url: "/student/quiz",
     },
     {
-      title: "AI Tutor",
+      title: t("nav.aiTutor"),
       icon: MessageSquare,
       url: "/student/chat",
     },
     {
-      title: "Profile",
+      title: t("nav.profile"),
       icon: User,
       url: "/student/profile",
     },
@@ -107,16 +138,16 @@ export function AppSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-accent/10">
-                {isTeacherPath ? "Teacher" : "Student"} Mode
+                {isTeacherPath ? t("mode.teacher") : t("mode.student")}
                 <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
               <DropdownMenuItem asChild className="cursor-pointer transition-colors hover:bg-accent/10">
-                <Link href="/teacher/dashboard">Teacher Mode</Link>
+                <Link href="/teacher/dashboard">{t("mode.teacher")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="cursor-pointer transition-colors hover:bg-accent/10">
-                <Link href="/student/classes">Student Mode</Link>
+                <Link href="/student/classes">{t("mode.student")}</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -125,14 +156,14 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("nav.home")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/")}>
                   <Link href="/">
                     <Home />
-                    <span>Home</span>
+                    <span>{t("nav.home")}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -142,7 +173,7 @@ export function AppSidebar() {
 
         {isTeacherPath && (
           <SidebarGroup>
-            <SidebarGroupLabel>Teacher</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("mode.teacher")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {teacherItems.map((item) => (
@@ -162,7 +193,7 @@ export function AppSidebar() {
 
         {isStudentPath && (
           <SidebarGroup>
-            <SidebarGroupLabel>Student</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("mode.student")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {studentItems.map((item) => (
@@ -186,16 +217,25 @@ export function AppSidebar() {
           <div className="flex items-center gap-3">
             <Avatar className="border-2 border-primary transition-all hover:border-accent">
               <AvatarImage src="/placeholder.svg?height=40&width=40" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarFallback>{profile?.full_name?.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium">Jane Doe</p>
-              <p className="text-xs text-muted-foreground">{isTeacherPath ? "Teacher" : "Student"}</p>
+              <p className="text-sm font-medium">{profile?.full_name || "User"}</p>
+              <p className="text-xs text-muted-foreground">{isTeacherPath ? t("mode.teacher") : t("mode.student")}</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent/10 hover:text-accent">
-            <LogOut className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-accent/10 hover:text-accent"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogOut className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
       </SidebarFooter>
     </Sidebar>

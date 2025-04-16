@@ -21,30 +21,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { DetailedAnalyticsModal } from "@/components/detailed-analytics-modal"
-
-// Sample data for the charts
-const performanceData = [
-  { month: "Jan", score: 75, attendance: 92, participation: 68 },
-  { month: "Feb", score: 82, attendance: 89, participation: 75 },
-  { month: "Mar", score: 78, attendance: 94, participation: 72 },
-  { month: "Apr", score: 85, attendance: 91, participation: 80 },
-  { month: "May", score: 88, attendance: 95, participation: 85 },
-  { month: "Jun", score: 92, attendance: 97, participation: 90 },
-]
-
-const subjectData = [
-  { name: "Biology", students: 32, avgScore: 85, color: "#8b5cf6" },
-  { name: "Chemistry", students: 28, avgScore: 78, color: "#06b6d4" },
-  { name: "Physics", students: 24, avgScore: 82, color: "#f97316" },
-  { name: "Mathematics", students: 30, avgScore: 76, color: "#10b981" },
-]
-
-const classDistributionData = [
-  { name: "Science", value: 5, color: "#8b5cf6" },
-  { name: "Math", value: 4, color: "#06b6d4" },
-  { name: "Language", value: 3, color: "#f97316" },
-  { name: "History", value: 2, color: "#10b981" },
-]
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Maximize2, AlertCircle, Loader2 } from "lucide-react"
+import { useDashboardData } from "@/hooks/use-dashboard-data"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180
@@ -121,6 +101,13 @@ export function TeacherDashboardChart() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedData, setSelectedData] = useState<any>(null)
   const [modalTitle, setModalTitle] = useState("Detailed Analytics")
+  const [fullscreenChart, setFullscreenChart] = useState<string | null>(null)
+
+  // Fetch data from Supabase
+  const { performanceData, subjectData, classDistributionData, loading, error, getChartData } = useDashboardData()
+
+  // Get formatted data for charts
+  const chartData = getChartData()
 
   const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index)
@@ -132,11 +119,43 @@ export function TeacherDashboardChart() {
     setModalOpen(true)
   }
 
+  const handleChartFullscreen = (chartType: string) => {
+    setFullscreenChart(chartType)
+  }
+
+  // If there's an error, show an error message
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error loading dashboard data</AlertTitle>
+        <AlertDescription>
+          {error.message}
+          <div className="mt-2">
+            <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
+          </div>
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // If data is loading, show a loading spinner
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading dashboard data...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="performance" className="w-full">
-        <div className="flex justify-between items-center mb-4">
-          <TabsList>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+          <TabsList className="w-full sm:w-auto">
             <TabsTrigger
               value="performance"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -185,10 +204,18 @@ export function TeacherDashboardChart() {
               <CardDescription>Average scores and participation metrics over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px]">
+              <div className="h-[400px] relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="absolute top-0 right-0 z-10"
+                  onClick={() => handleChartFullscreen("performance")}
+                >
+                  <Maximize2 className="h-4 w-4 mr-1" /> Expand
+                </Button>
                 <ResponsiveContainer width="100%" height="100%">
                   {chartType === "line" ? (
-                    <LineChart data={performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <LineChart data={chartData.performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                       <XAxis dataKey="month" />
                       <YAxis />
@@ -204,7 +231,10 @@ export function TeacherDashboardChart() {
                           r: 8,
                           className: "cursor-pointer",
                           onClick: (_, index) =>
-                            handleDataClick(performanceData[index], `${performanceData[index].month} Performance`),
+                            handleDataClick(
+                              chartData.performanceData[index],
+                              `${chartData.performanceData[index].month} Performance`,
+                            ),
                         }}
                         className="transition-all duration-300"
                       />
@@ -218,7 +248,10 @@ export function TeacherDashboardChart() {
                           r: 8,
                           className: "cursor-pointer",
                           onClick: (_, index) =>
-                            handleDataClick(performanceData[index], `${performanceData[index].month} Performance`),
+                            handleDataClick(
+                              chartData.performanceData[index],
+                              `${chartData.performanceData[index].month} Performance`,
+                            ),
                         }}
                         className="transition-all duration-300"
                       />
@@ -232,13 +265,16 @@ export function TeacherDashboardChart() {
                           r: 8,
                           className: "cursor-pointer",
                           onClick: (_, index) =>
-                            handleDataClick(performanceData[index], `${performanceData[index].month} Performance`),
+                            handleDataClick(
+                              chartData.performanceData[index],
+                              `${chartData.performanceData[index].month} Performance`,
+                            ),
                         }}
                         className="transition-all duration-300"
                       />
                     </LineChart>
                   ) : (
-                    <BarChart data={performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <BarChart data={chartData.performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                       <XAxis dataKey="month" />
                       <YAxis />
@@ -289,9 +325,21 @@ export function TeacherDashboardChart() {
               <CardDescription>Average scores by subject and number of students</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px]">
+              <div className="h-[400px] relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="absolute top-0 right-0 z-10"
+                  onClick={() => handleChartFullscreen("subjects")}
+                >
+                  <Maximize2 className="h-4 w-4 mr-1" /> Expand
+                </Button>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={subjectData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }} barSize={40}>
+                  <BarChart
+                    data={chartData.subjectData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                    barSize={40}
+                  >
                     <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                     <XAxis dataKey="name" />
                     <YAxis yAxisId="left" orientation="left" stroke="#8b5cf6" />
@@ -333,13 +381,21 @@ export function TeacherDashboardChart() {
               <CardDescription>Distribution of classes by subject area</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px] flex items-center justify-center">
+              <div className="h-[400px] flex items-center justify-center relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="absolute top-0 right-0 z-10"
+                  onClick={() => handleChartFullscreen("distribution")}
+                >
+                  <Maximize2 className="h-4 w-4 mr-1" /> Expand
+                </Button>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       activeIndex={activeIndex}
                       activeShape={renderActiveShape}
-                      data={classDistributionData}
+                      data={chartData.classDistributionData}
                       cx="50%"
                       cy="50%"
                       innerRadius={70}
@@ -348,11 +404,14 @@ export function TeacherDashboardChart() {
                       dataKey="value"
                       onMouseEnter={onPieEnter}
                       onClick={(_, index) =>
-                        handleDataClick(classDistributionData[index], `${classDistributionData[index].name} Classes`)
+                        handleDataClick(
+                          chartData.classDistributionData[index],
+                          `${chartData.classDistributionData[index].name} Classes`,
+                        )
                       }
                       className="cursor-pointer"
                     >
-                      {classDistributionData.map((entry, index) => (
+                      {chartData.classDistributionData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} className="transition-all hover:opacity-80" />
                       ))}
                     </Pie>
@@ -374,6 +433,95 @@ export function TeacherDashboardChart() {
         data={selectedData}
         title={modalTitle}
       />
+
+      {fullscreenChart && (
+        <Dialog open={!!fullscreenChart} onOpenChange={() => setFullscreenChart(null)}>
+          <DialogContent className="max-w-6xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>
+                {fullscreenChart === "performance"
+                  ? "Student Performance Trends"
+                  : fullscreenChart === "subjects"
+                    ? "Subject Performance"
+                    : "Class Distribution"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="h-[70vh] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {fullscreenChart === "performance" && chartType === "line" ? (
+                  <LineChart data={chartData.performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Line type="monotone" dataKey="score" name="Average Score" stroke="#8b5cf6" strokeWidth={2} />
+                    <Line type="monotone" dataKey="attendance" name="Attendance %" stroke="#06b6d4" strokeWidth={2} />
+                    <Line
+                      type="monotone"
+                      dataKey="participation"
+                      name="Participation %"
+                      stroke="#f97316"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                ) : fullscreenChart === "performance" && chartType === "bar" ? (
+                  <BarChart data={chartData.performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar dataKey="score" name="Average Score" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="attendance" name="Attendance %" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="participation" name="Participation %" fill="#f97316" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                ) : fullscreenChart === "subjects" ? (
+                  <BarChart
+                    data={chartData.subjectData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                    barSize={40}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis dataKey="name" />
+                    <YAxis yAxisId="left" orientation="left" stroke="#8b5cf6" />
+                    <YAxis yAxisId="right" orientation="right" stroke="#06b6d4" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar yAxisId="left" dataKey="avgScore" name="Average Score" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    <Bar
+                      yAxisId="right"
+                      dataKey="students"
+                      name="Number of Students"
+                      fill="#06b6d4"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                ) : (
+                  <PieChart>
+                    <Pie
+                      data={chartData.classDistributionData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={100}
+                      outerRadius={140}
+                      fill="#8884d8"
+                      dataKey="value"
+                      className="cursor-pointer"
+                    >
+                      {chartData.classDistributionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   )
 }

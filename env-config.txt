@@ -1,0 +1,24 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║ CODEX: FeverDucation Environment Configuration                             ║
+# ║ Created by: Cascade AI Assistant                                           ║
+# ║ Purpose: Environment variables for Docker deployment                        ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# Database
+POSTGRES_PASSWORD=strongPostgresPassword123!
+
+# Supabase
+SUPABASE_URL=http://localhost:54321
+JWT_SECRET=your_jwt_secret_key_should_be_very_long_and_random_string
+SUPABASE_ANON_KEY=your_supabase_anon_key_should_be_very_long_and_random
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_should_be_very_long_and_random
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_should_be_very_long_and_random
+
+# Supabase Studio
+DASHBOARD_USERNAME=admin
+DASHBOARD_PASSWORD=StrongAdminPassword123!
+
+# Admin User
+ADMIN_EMAIL=admin@fevereducation.com
+ADMIN_PASSWORD=Admin123!

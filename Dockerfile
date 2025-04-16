@@ -1,112 +1,49 @@
-# /////////////////////////////////////////////////////////////////////////////
-# //                                                                         //
-# //  [FEVERDUCATION] - Dockerfile                                           //
-# //  ---------------------------------------------------------------        //
-# //  Multi-stage build file for containerizing the FeverEducation           //
-# //  application with Next.js frontend and Python AI backend                //
-# //                                                                         //
-# //  CODEX LEVEL: ALPHA-7                                                   //
-# //  VERSION: 1.0.0                                                         //
-# //  PLATFORM: CROSS-COMPATIBLE (WIN/LINUX)                                 //
-# //                                                                         //
-# /////////////////////////////////////////////////////////////////////////////
+# Use Node.js LTS
+FROM node:18-alpine AS base
 
-# Stage 1: Build the Next.js application
-FROM node:20-alpine AS frontend-builder
-
-# Set working directory for the frontend
+# Install dependencies only when needed
+FROM base AS deps
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
-
-# Copy package files and install dependencies
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-# Copy the rest of the application
-COPY . .
-
-# Build the Next.js application
-RUN pnpm build
-
-# Stage 2: Build the Python backend with venv
-FROM python:3.11-slim AS backend-builder
-
-# Set working directory for backend
-WORKDIR /app/ai-backend
-
-# Install required packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Setup Python virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy and install Python dependencies
-COPY ai-backend/requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Stage 3: Final runtime image with Ollama
-FROM debian:bookworm-slim
+# Copy package files
+COPY package.json package-lock.json* ./
 
 # Install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    nodejs \
-    npm \
-    python3 \
-    && rm -rf /var/lib/apt/lists/*
+RUN npm ci
 
-# Install Ollama for Linux
-RUN curl -fsSL https://ollama.com/install.sh | sh
-
-# Create ollama directory and user
-RUN mkdir -p /root/.ollama
-
-# Copy Next.js build from frontend stage
+# Rebuild the source code only when needed
+FROM base AS builder
 WORKDIR /app
-COPY --from=frontend-builder /app/.next ./.next
-COPY --from=frontend-builder /app/public ./public
-COPY --from=frontend-builder /app/node_modules ./node_modules
-COPY --from=frontend-builder /app/package.json ./package.json
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-# Copy Python virtual environment
-COPY --from=backend-builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Build the application
+RUN npm run build
 
-# Copy AI backend code
-COPY --from=backend-builder /app/ai-backend ./ai-backend
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
 
-# Create a startup script
-RUN echo '#!/bin/bash\n\
-# Start Ollama in the background\n\
-ollama serve &\n\
-\n\
-# Wait for Ollama to start\n\
-echo "Waiting for Ollama service to start..."\n\
-sleep 5\n\
-\n\
-# Pull the default model (llama3.2)\n\
-echo "Pulling llama3.2 model, this may take a while..."\n\
-ollama pull llama3.2\n\
-\n\
-# Start the Next.js server\n\
-echo "Starting Next.js application..."\n\
-cd /app\n\
-npm start\n\
-' > /app/start.sh && chmod +x /app/start.sh
+ENV NODE_ENV production
 
-# Expose port for Next.js
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Set the correct permissions
+USER nextjs
+
+# Expose port
 EXPOSE 3000
 
-# Expose port for Ollama API
-EXPOSE 11434
+# Set environment variables
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
 
-# Start the application
-CMD ["/app/start.sh"]
+# Run the application
+CMD ["node", "server.js"]

@@ -9,49 +9,58 @@ import { Progress } from "@/components/ui/progress"
 import { TeacherDashboardChart } from "@/components/teacher-dashboard-chart"
 import { TeacherDashboardCalendar } from "@/components/teacher-dashboard-calendar"
 import { AIInsights } from "@/components/ai-insights"
+import { useLanguage } from "@/contexts/language-context"
+import Link from "next/link"
 
 export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { t } = useLanguage()
 
   return (
     <div className="container mx-auto p-6">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Teacher Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, Jane Doe</p>
+          <h1 className="text-3xl font-bold gradient-text">{t("nav.dashboard")}</h1>
+          <p className="text-muted-foreground">{t("dashboard.welcome")}, Jane Doe</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <Button variant="outline" className="group">
             <Calendar className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-            Schedule Class
+            {t("dashboard.scheduleClass")}
           </Button>
           <Button className="group">
             <BookOpen className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-            Create New Class
+            {t("dashboard.createClass")}
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/teacher/dashboard/manage-data">
+              <BarChart className="mr-2 h-4 w-4" />
+              Manage Data
+            </Link>
           </Button>
           <AIInsights />
         </div>
       </div>
 
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="mb-6">
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="mb-8">
         <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger
             value="overview"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
           >
-            Overview
+            {t("dashboard.overview")}
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
           >
-            Analytics
+            {t("dashboard.analytics")}
           </TabsTrigger>
           <TabsTrigger
             value="schedule"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
           >
-            Schedule
+            {t("dashboard.schedule")}
           </TabsTrigger>
         </TabsList>
 
@@ -59,7 +68,7 @@ export default function TeacherDashboard() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card className="scale-effect" hover>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("dashboard.totalClasses")}</CardTitle>
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -70,7 +79,7 @@ export default function TeacherDashboard() {
 
             <Card className="scale-effect" hover>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("dashboard.totalStudents")}</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -81,7 +90,7 @@ export default function TeacherDashboard() {
 
             <Card className="scale-effect" hover>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("dashboard.avgEngagement")}</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -92,7 +101,7 @@ export default function TeacherDashboard() {
 
             <Card className="scale-effect" hover>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Hours Taught</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("dashboard.hoursTaught")}</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -102,10 +111,10 @@ export default function TeacherDashboard() {
             </Card>
           </div>
 
-          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4 scale-effect" hover>
               <CardHeader>
-                <CardTitle>Student Performance</CardTitle>
+                <CardTitle>{t("dashboard.studentPerformance")}</CardTitle>
                 <CardDescription>Average scores across all classes</CardDescription>
               </CardHeader>
               <CardContent>
@@ -115,7 +124,7 @@ export default function TeacherDashboard() {
 
             <Card className="col-span-3 scale-effect" hover>
               <CardHeader>
-                <CardTitle>Upcoming Classes</CardTitle>
+                <CardTitle>{t("dashboard.upcomingClasses")}</CardTitle>
                 <CardDescription>Your schedule for the next few days</CardDescription>
               </CardHeader>
               <CardContent>
@@ -173,36 +182,38 @@ export default function TeacherDashboard() {
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="col-span-1 scale-effect" hover>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Class Distribution</CardTitle>
-                  <PieChart className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px] flex items-center justify-center">
-                  <TeacherDashboardChart />
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid gap-8">
+            <div className="grid gap-8 md:grid-cols-3">
+              <Card className="md:col-span-1 scale-effect" hover>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Class Distribution</CardTitle>
+                    <PieChart className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] flex items-center justify-center">
+                    <TeacherDashboardChart />
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="col-span-2 scale-effect" hover>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Student Performance Trends</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <TeacherDashboardChart />
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="md:col-span-2 scale-effect" hover>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Student Performance Trends</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <TeacherDashboardChart />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-            <Card className="col-span-3 scale-effect" hover>
+            <Card className="scale-effect" hover>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Class Engagement Metrics</CardTitle>
@@ -210,7 +221,7 @@ export default function TeacherDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   {[
                     { name: "Physics 101", attendance: 95, participation: 87, completion: 92 },
                     { name: "Chemistry Basics", attendance: 88, participation: 76, completion: 85 },

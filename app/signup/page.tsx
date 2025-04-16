@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react"
+import { Eye, EyeOff, UserPlus, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -15,47 +15,90 @@ import { LanguageSelector } from "@/components/language-selector"
 import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    fullName: "",
+    role: "student" as "teacher" | "student",
   })
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const { t } = useLanguage()
-  const { signIn } = useAuth()
+  const { signUp } = useAuth()
   const { toast } = useToast()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    setError(null) // Clear error when user types
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRoleChange = (value: "teacher" | "student") => {
+    setFormData((prev) => ({ ...prev, role: value }))
+    setError(null) // Clear error when user changes role
+  }
+
+  const validateForm = () => {
+    if (!formData.fullName.trim()) {
+      setError("Full name is required")
+      return false
+    }
+
+    if (!formData.email.trim()) {
+      setError("Email is required")
+      return false
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address")
+      return false
+    }
+
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long")
+      return false
+    }
+
+    return true
+  }
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
+    setError(null)
 
     try {
-      const { success, error } = await signIn(formData.email, formData.password)
+      const { success, error } = await signUp(formData.email, formData.password, formData.fullName, formData.role)
 
       if (success) {
         toast({
-          title: "Login successful",
-          description: "Welcome back to FeverDucation!",
+          title: "Account created",
+          description: "Your account has been created successfully!",
           variant: "success",
         })
         // Auth context will handle the redirect based on user role
       } else {
+        setError(error || "Failed to create account")
         toast({
-          title: "Login failed",
-          description: error || "Invalid email or password",
+          title: "Signup failed",
+          description: error || "Failed to create account",
           variant: "destructive",
         })
       }
     } catch (error) {
-      console.error("Login error:", error)
+      console.error("Signup error:", error)
+      setError("An unexpected error occurred. Please try again.")
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -85,11 +128,29 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>Enter your credentials to access your account</CardDescription>
+            <CardTitle>Create an Account</CardTitle>
+            <CardDescription>Sign up to get started with FeverDucation</CardDescription>
           </CardHeader>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSignup}>
             <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  placeholder="John Doe"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -113,6 +174,7 @@ export default function LoginPage() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
+                    minLength={8}
                   />
                   <Button
                     type="button"
@@ -129,17 +191,24 @@ export default function LoginPage() {
                     <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground">Password must be at least 8 characters long</p>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="remember" className="h-4 w-4 rounded border-gray-300" />
-                  <Label htmlFor="remember" className="text-sm font-normal">
-                    Remember me
-                  </Label>
-                </div>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Forgot password?
-                </Link>
+              <div className="space-y-2">
+                <Label>I am a</Label>
+                <RadioGroup
+                  value={formData.role}
+                  onValueChange={handleRoleChange as (value: string) => void}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="student" id="student" />
+                    <Label htmlFor="student">Student</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="teacher" id="teacher" />
+                    <Label htmlFor="teacher">Teacher</Label>
+                  </div>
+                </RadioGroup>
               </div>
             </CardContent>
             <CardFooter>
@@ -147,12 +216,12 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
+                    Creating account...
                   </>
                 ) : (
                   <>
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Login
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Sign Up
                   </>
                 )}
               </Button>
@@ -162,9 +231,9 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center text-sm">
           <p className="text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/" className="text-primary hover:underline">
+              Log in
             </Link>
           </p>
         </div>
