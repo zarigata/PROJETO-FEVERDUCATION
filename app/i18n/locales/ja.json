@@ -1,0 +1,202 @@
+{
+  "common": {
+    "appName": "フィーバーエデュケーション",
+    "login": "ログイン",
+    "signup": "新規登録",
+    "logout": "ログアウト",
+    "dashboard": "ダッシュボード",
+    "classes": "クラス",
+    "students": "生徒",
+    "schedule": "スケジュール",
+    "aiGenerator": "AI授業ジェネレーター",
+    "aiTutor": "AIチューター",
+    "settings": "設定",
+    "assignments": "課題",
+    "profile": "プロフィール",
+    "back": "ホームに戻る",
+    "getStarted": "始める",
+    "learnMore": "詳細を見る",
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirmPassword": "パスワード（確認）",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "dontHaveAccount": "アカウントをお持ちでないですか？",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+    "fullName": "氏名",
+    "language": "言語",
+    "english": "英語",
+    "japanese": "日本語",
+    "portuguese": "ポルトガル語",
+    "darkMode": "ダークモード",
+    "lightMode": "ライトモード",
+    "systemTheme": "システム"
+  },
+  "home": {
+    "hero": {
+      "title": "モダン教育プラットフォーム",
+      "subtitle": "教師と生徒の両方のために設計された、AIを活用したツールと包括的な分析機能を備えたAndroidインスパイアの教育プラットフォーム。"
+    },
+    "features": {
+      "title": "プラットフォームの特徴",
+      "teacherDashboard": "教師ダッシュボード",
+      "teacherDashboardDesc": "教育者のための包括的な分析とクラスルーム管理ツール。",
+      "studentPortal": "生徒ポータル",
+      "studentPortalDesc": "クラス、課題、教育リソースへの簡単なアクセス。",
+      "aiGenerator": "AI授業ジェネレーター",
+      "aiGeneratorDesc": "魅力的でパーソナライズされた授業計画を作成するAI駆動ツール。",
+      "aiTutor": "AIチャットボット",
+      "aiTutorDesc": "学習をサポートする教育支援チャットボット。"
+    },
+    "cta": {
+      "title": "教育体験を変革する準備はできていますか？",
+      "subtitle": "すでに何千人もの教育者と学生が学習成果を向上させるために私たちのプラットフォームを利用しています。",
+      "button": "今すぐ登録"
+    },
+    "footer": {
+      "description": "Androidデザイン原則を取り入れたモダンな教育プラットフォーム。",
+      "quickLinks": "クイックリンク",
+      "about": "私たちについて",
+      "features": "機能",
+      "pricing": "料金",
+      "contact": "お問い合わせ",
+      "contactUs": "お問い合わせ"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "おかえりなさい",
+      "subtitle": "フィーバーエデュケーションアカウントにサインイン",
+      "teacher": "教師",
+      "student": "生徒"
+    },
+    "signup": {
+      "title": "アカウント作成",
+      "subtitle": "教師または生徒としてフィーバーエデュケーションに参加",
+      "teacher": "教師",
+      "student": "生徒",
+      "subjectArea": "科目分野",
+      "math": "数学",
+      "science": "理科",
+      "language": "言語",
+      "other": "その他",
+      "gradeLevel": "学年レベル",
+      "selectGrade": "学年レベルを選択",
+      "elementary": "小学校",
+      "middle": "中学校",
+      "high": "高校",
+      "college": "大学"
+    }
+  },
+  "teacher": {
+    "dashboard": {
+      "welcome": "お帰りなさい、ジョンソン先生！今日のクラスの状況をご覧ください。",
+      "createClass": "新しいクラスを作成",
+      "stats": {
+        "students": "生徒総数",
+        "studentsDesc": "全クラス合計",
+        "classes": "アクティブクラス",
+        "classesDesc": "現在教えているクラス",
+        "assignments": "課題",
+        "assignmentsDesc": "8件の採点が必要",
+        "hours": "授業時間",
+        "hoursDesc": "今週"
+      },
+      "tabs": {
+        "overview": "概要",
+        "analytics": "分析",
+        "classes": "クラス"
+      },
+      "attendance": "週間出席率",
+      "attendanceDesc": "全クラスの平均出席率",
+      "gradeDistribution": "成績分布",
+      "gradeDistributionDesc": "全クラスの成績分布",
+      "performance": "クラスパフォーマンス",
+      "performanceDesc": "平均、最高、最低スコア（クラス別）",
+      "schedule": "今日のスケジュール",
+      "scheduleDesc": "今日の予定クラス",
+      "viewSchedule": "スケジュール全体を表示",
+      "analytics": "詳細分析",
+      "analyticsDesc": "すべてのクラスの包括的な分析",
+      "allClasses": "すべてのクラス",
+      "allClassesDesc": "すべてのクラスを管理"
+    },
+    "aiGenerator": {
+      "title": "AI授業ジェネレーター",
+      "subtitle": "AIアシスタンスで包括的な授業計画、アクティビティ、評価を作成します。",
+      "lessonPlan": "授業計画ジェネレーター",
+      "lessonPlanDesc": "カスタマイズされた授業計画を生成するためのクラスの詳細を提供してください。",
+      "topic": "授業トピック",
+      "topicPlaceholder": "例：光合成、第二次世界大戦、分数",
+      "gradeLevel": "学年レベル",
+      "duration": "授業時間（分）",
+      "activities": "インタラクティブアクティビティを含める",
+      "assessments": "評価を含める",
+      "notes": "追加メモ（任意）",
+      "notesPlaceholder": "この授業に関する特定の要件や焦点分野...",
+      "generate": "授業計画を生成",
+      "generating": "生成中...",
+      "generatedPlan": "生成された授業計画",
+      "generatedPlanDesc": "AIが生成した授業計画がここに表示されます。",
+      "noLessonYet": "まだ授業計画が生成されていません",
+      "noLessonDesc": "左側のフォームに記入し、「授業計画を生成」をクリックしてカスタマイズされた授業を作成してください。",
+      "saveTime": "時間の節約",
+      "targetedLearning": "ターゲット学習",
+      "studentEngagement": "生徒の参加",
+      "curriculumAligned": "カリキュラム準拠",
+      "preview": "プレビュー",
+      "edit": "編集",
+      "materials": "教材",
+      "suggestedMaterials": "推奨教材"
+    }
+  },
+  "student": {
+    "dashboard": {
+      "welcome": "お帰りなさい、アレックス！クラスと課題の概要です。",
+      "stats": {
+        "courses": "登録コース",
+        "assignments": "保留中の課題",
+        "hours": "学習時間",
+        "grade": "平均成績"
+      },
+      "tabs": {
+        "overview": "概要",
+        "courses": "マイコース",
+        "assignments": "課題"
+      },
+      "schedule": "今日のスケジュール",
+      "scheduleDesc": "今日のクラス",
+      "upcomingAssignments": "今後の課題",
+      "upcomingAssignmentsDesc": "期限が近い課題",
+      "viewAll": "すべての課題を表示",
+      "aiTutor": "AIチューター",
+      "aiTutorDesc": "学習のサポートを受ける",
+      "needHelp": "宿題の手伝いが必要ですか？",
+      "askAi": "AIチューターに任意の科目についての支援を求めましょう。",
+      "startChat": "チャットを開始",
+      "courseProgress": "コース進捗",
+      "nextClass": "次のクラス",
+      "viewCourse": "コースの詳細を表示",
+      "allAssignments": "すべての課題",
+      "allAssignmentsDesc": "課題の追跡と管理",
+      "pending": "保留中",
+      "completed": "完了",
+      "due": "期限"
+    },
+    "aiTutor": {
+      "title": "AIチューター",
+      "subtitle": "学習と課題に関するパーソナライズされたヘルプを受ける",
+      "placeholder": "学習に関する質問を何でも聞いてください...",
+      "suggestedQuestions": "おすすめの質問",
+      "suggestedQuestionsDesc": "これらの質問を試してみてください",
+      "tools": "学習ツール",
+      "toolsDesc": "学習を助けるための追加リソース",
+      "calculator": "数学電卓",
+      "resources": "学習リソース",
+      "visualLearning": "ビジュアル学習",
+      "quizzes": "練習クイズ",
+      "hello": "こんにちは、アレックス！私はあなたのAIチューターです。今日の学習のお手伝いをどうしましょうか？"
+    }
+  }
+}

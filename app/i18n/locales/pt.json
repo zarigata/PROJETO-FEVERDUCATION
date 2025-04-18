@@ -1,0 +1,202 @@
+{
+  "common": {
+    "appName": "FeverEducation",
+    "login": "Entrar",
+    "signup": "Cadastrar",
+    "logout": "Sair",
+    "dashboard": "Painel",
+    "classes": "Aulas",
+    "students": "Alunos",
+    "schedule": "Agenda",
+    "aiGenerator": "Gerador de Aulas IA",
+    "aiTutor": "Tutor IA",
+    "settings": "Configurações",
+    "assignments": "Tarefas",
+    "profile": "Perfil",
+    "back": "Voltar para Início",
+    "getStarted": "Começar",
+    "learnMore": "Saiba Mais",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "email": "Email",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "dontHaveAccount": "Não tem uma conta?",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "fullName": "Nome Completo",
+    "language": "Idioma",
+    "english": "Inglês",
+    "japanese": "Japonês",
+    "portuguese": "Português",
+    "darkMode": "Modo Escuro",
+    "lightMode": "Modo Claro",
+    "systemTheme": "Sistema"
+  },
+  "home": {
+    "hero": {
+      "title": "Plataforma de Educação Moderna",
+      "subtitle": "Uma plataforma de ensino inspirada no Android, projetada para professores e alunos, com ferramentas de IA e análises abrangentes."
+    },
+    "features": {
+      "title": "Recursos da Plataforma",
+      "teacherDashboard": "Painel do Professor",
+      "teacherDashboardDesc": "Análises abrangentes e ferramentas de gerenciamento de sala de aula para educadores.",
+      "studentPortal": "Portal do Aluno",
+      "studentPortalDesc": "Acesso fácil a aulas, tarefas e recursos educacionais.",
+      "aiGenerator": "Gerador de Aulas com IA",
+      "aiGeneratorDesc": "Ferramentas com IA para criar planos de aula envolventes e personalizados.",
+      "aiTutor": "Chatbot de IA",
+      "aiTutorDesc": "Chatbot de suporte educacional para auxiliar os alunos em seu aprendizado."
+    },
+    "cta": {
+      "title": "Pronto para Transformar sua Experiência de Ensino?",
+      "subtitle": "Junte-se a milhares de educadores e estudantes que já usam nossa plataforma para melhorar os resultados de aprendizagem.",
+      "button": "Cadastre-se Agora"
+    },
+    "footer": {
+      "description": "Uma plataforma de ensino moderna com princípios de design do Android.",
+      "quickLinks": "Links Rápidos",
+      "about": "Sobre Nós",
+      "features": "Recursos",
+      "pricing": "Preços",
+      "contact": "Contato",
+      "contactUs": "Fale Conosco"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de Volta",
+      "subtitle": "Entre na sua conta FeverEducation",
+      "teacher": "Professor",
+      "student": "Aluno"
+    },
+    "signup": {
+      "title": "Criar Conta",
+      "subtitle": "Junte-se ao FeverEducation como professor ou aluno",
+      "teacher": "Professor",
+      "student": "Aluno",
+      "subjectArea": "Área de Disciplina",
+      "math": "Matemática",
+      "science": "Ciências",
+      "language": "Linguagens",
+      "other": "Outro",
+      "gradeLevel": "Nível Escolar",
+      "selectGrade": "Selecione o Nível Escolar",
+      "elementary": "Ensino Fundamental I",
+      "middle": "Ensino Fundamental II",
+      "high": "Ensino Médio",
+      "college": "Ensino Superior"
+    }
+  },
+  "teacher": {
+    "dashboard": {
+      "welcome": "Bem-vindo de volta, Sra. Johnson! Aqui está o que está acontecendo com suas aulas hoje.",
+      "createClass": "Criar Nova Aula",
+      "stats": {
+        "students": "Total de Alunos",
+        "studentsDesc": "Em todas as aulas",
+        "classes": "Aulas Ativas",
+        "classesDesc": "Atualmente lecionando",
+        "assignments": "Tarefas",
+        "assignmentsDesc": "8 precisam de avaliação",
+        "hours": "Horas de Ensino",
+        "hoursDesc": "Esta semana"
+      },
+      "tabs": {
+        "overview": "Visão Geral",
+        "analytics": "Análises",
+        "classes": "Aulas"
+      },
+      "attendance": "Presença Semanal",
+      "attendanceDesc": "Taxa média de presença em todas as aulas",
+      "gradeDistribution": "Distribuição de Notas",
+      "gradeDistributionDesc": "Distribuição geral de notas em todas as aulas",
+      "performance": "Desempenho da Turma",
+      "performanceDesc": "Médias, notas mais altas e mais baixas por turma",
+      "schedule": "Agenda de Hoje",
+      "scheduleDesc": "Suas próximas aulas para hoje",
+      "viewSchedule": "Ver Agenda Completa",
+      "analytics": "Análises Detalhadas",
+      "analyticsDesc": "Análises abrangentes para todas as suas aulas",
+      "allClasses": "Todas as Aulas",
+      "allClassesDesc": "Gerencie todas as suas aulas"
+    },
+    "aiGenerator": {
+      "title": "Gerador de Aulas com IA",
+      "subtitle": "Crie planos de aula abrangentes, atividades e avaliações com assistência de IA.",
+      "lessonPlan": "Gerador de Plano de Aula",
+      "lessonPlanDesc": "Forneça detalhes sobre sua aula para gerar um plano personalizado.",
+      "topic": "Tópico da Aula",
+      "topicPlaceholder": "ex: Fotossíntese, Segunda Guerra Mundial, Frações",
+      "gradeLevel": "Nível Escolar",
+      "duration": "Duração da Aula (minutos)",
+      "activities": "Incluir Atividades Interativas",
+      "assessments": "Incluir Avaliações",
+      "notes": "Notas Adicionais (Opcional)",
+      "notesPlaceholder": "Quaisquer requisitos específicos ou áreas de foco para esta aula...",
+      "generate": "Gerar Plano de Aula",
+      "generating": "Gerando...",
+      "generatedPlan": "Plano de Aula Gerado",
+      "generatedPlanDesc": "Seu plano de aula gerado por IA aparecerá aqui.",
+      "noLessonYet": "Nenhum Plano de Aula Gerado Ainda",
+      "noLessonDesc": "Preencha o formulário à esquerda e clique em \"Gerar Plano de Aula\" para criar uma aula personalizada.",
+      "saveTime": "Economize Tempo",
+      "targetedLearning": "Aprendizado Direcionado",
+      "studentEngagement": "Engajamento dos Alunos",
+      "curriculumAligned": "Alinhado ao Currículo",
+      "preview": "Visualizar",
+      "edit": "Editar",
+      "materials": "Materiais",
+      "suggestedMaterials": "Materiais Sugeridos"
+    }
+  },
+  "student": {
+    "dashboard": {
+      "welcome": "Bem-vindo de volta, Alex! Aqui está uma visão geral de suas aulas e tarefas.",
+      "stats": {
+        "courses": "Cursos Matriculados",
+        "assignments": "Tarefas Pendentes",
+        "hours": "Horas de Estudo",
+        "grade": "Nota Média"
+      },
+      "tabs": {
+        "overview": "Visão Geral",
+        "courses": "Meus Cursos",
+        "assignments": "Tarefas"
+      },
+      "schedule": "Agenda de Hoje",
+      "scheduleDesc": "Suas aulas para hoje",
+      "upcomingAssignments": "Próximas Tarefas",
+      "upcomingAssignmentsDesc": "Tarefas com prazo próximo",
+      "viewAll": "Ver Todas as Tarefas",
+      "aiTutor": "Tutor IA",
+      "aiTutorDesc": "Obtenha ajuda com seus estudos",
+      "needHelp": "Precisa de ajuda com sua lição de casa?",
+      "askAi": "Peça ajuda ao tutor de IA com qualquer disciplina.",
+      "startChat": "Iniciar Chat",
+      "courseProgress": "Progresso do Curso",
+      "nextClass": "Próxima Aula",
+      "viewCourse": "Ver Detalhes do Curso",
+      "allAssignments": "Todas as Tarefas",
+      "allAssignmentsDesc": "Acompanhe e gerencie suas tarefas",
+      "pending": "Pendentes",
+      "completed": "Concluídas",
+      "due": "Prazo"
+    },
+    "aiTutor": {
+      "title": "Tutor IA",
+      "subtitle": "Obtenha ajuda personalizada com seus estudos e tarefas",
+      "placeholder": "Pergunte qualquer coisa sobre seus estudos...",
+      "suggestedQuestions": "Perguntas Sugeridas",
+      "suggestedQuestionsDesc": "Tente fazer uma destas perguntas",
+      "tools": "Ferramentas de Aprendizado",
+      "toolsDesc": "Recursos adicionais para ajudar você a aprender",
+      "calculator": "Calculadora Matemática",
+      "resources": "Recursos de Estudo",
+      "visualLearning": "Aprendizado Visual",
+      "quizzes": "Questionários de Prática",
+      "hello": "Olá Alex! Eu sou seu tutor de IA. Como posso ajudar com seus estudos hoje?"
+    }
+  }
+}
