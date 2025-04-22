@@ -1,0 +1,7 @@
+/* Light theme preset */
+body {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

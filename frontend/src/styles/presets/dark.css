@@ -1,0 +1,7 @@
+/* Dark theme preset */
+body {
+  --bg-color: #1a202c;
+  --text-color: #e2e8f0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

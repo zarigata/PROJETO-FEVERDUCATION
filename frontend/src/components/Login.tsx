@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { useTranslation } from 'react-i18next';
 
 const Login: React.FC = () => {
@@ -12,12 +12,14 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/login', null, {
-        params: { username: email, password },
-      });
+      const res = await api.post('/auth/login', null, { params: { username: email, password } });
       const { access_token } = res.data;
       localStorage.setItem('token', access_token);
-      navigate('/student');
+      // determine user role
+      const me = await api.get('/auth/me');
+      const role = me.data.role;
+      const path = role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/student';
+      navigate(path);
     } catch {
       alert(t('login_error'));
     }

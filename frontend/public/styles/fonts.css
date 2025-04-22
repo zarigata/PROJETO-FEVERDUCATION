@@ -1,0 +1,16 @@
+/* Fonts hosted locally */
+@font-face {
+  font-family: 'Roboto';
+  src: url('%PUBLIC_URL%/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('%PUBLIC_URL%/fonts/NotoSansJP-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+html, body {
+  font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+}

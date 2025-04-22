@@ -13,5 +13,12 @@
   "preset_high_contrast": "ハイコントラスト",
   "user_management": "ユーザー管理",
   "audit_logs": "監査ログ",
-  "system_status": "システムステータス"
+  "system_status": "システムステータス",
+  "analytics": "分析",
+  "classrooms": "教室",
+  "grades": "成績",
+  "ai_tutor": "AIチューター",
+  "lesson_generator": "レッスンジェネレーター",
+  "generate": "生成",
+  "users": "ユーザー"
 }

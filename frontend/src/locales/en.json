@@ -13,5 +13,12 @@
   "preset_high_contrast": "High Contrast",
   "user_management": "User Management",
   "audit_logs": "Audit Logs",
-  "system_status": "System Status"
+  "system_status": "System Status",
+  "analytics": "Analytics",
+  "classrooms": "Classrooms",
+  "grades": "Grades",
+  "ai_tutor": "AI Tutor",
+  "lesson_generator": "Lesson Generator",
+  "generate": "Generate",
+  "users": "Users"
 }

@@ -5,6 +5,7 @@ import StudentDashboard from './components/StudentDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -12,9 +13,9 @@ function App() {
       <LanguageSwitcher />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/student" element={<PrivateRoute role="student"><StudentDashboard /></PrivateRoute>} />
+        <Route path="/teacher" element={<PrivateRoute role="teacher"><TeacherDashboard /></PrivateRoute>} />
+        <Route path="/admin" element={<PrivateRoute role="admin"><AdminDashboard /></PrivateRoute>} />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>

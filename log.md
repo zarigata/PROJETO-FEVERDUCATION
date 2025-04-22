@@ -69,3 +69,19 @@ This document details all code and configuration changes made to implement Steps
 3. Alembic
    - Initialized Alembic in `backend/alembic/`.
    - Generated initial migration (`alembic revision --autogenerate -m 
+
+---
+
+## Step 4: Frontend Development
+- Added `src/api.ts` as central API client with auth interceptor.
+- Created components:
+  - `CSSSettings.tsx` (CSS presets & custom CSS upload)
+  - `StudentDashboard.tsx` (analytics, classrooms, grades, AI Tutor chat)
+  - `TeacherDashboard.tsx` (analytics, classroom CRUD, lesson generator)
+  - `AdminDashboard.tsx` (user management, audit logs, system status)
+  - `PrivateRoute.tsx` for role-based route protection
+- Updated `Login.tsx` to use API client and redirect based on user role
+- Wrapped protected routes with `PrivateRoute` in `App.tsx`
+- Added `public/styles/fonts.css` with Roboto & Noto Sans JP; linked in `public/index.html`
+- Added CSS preset files under `src/styles/presets` (light, dark, high-contrast)
+- Extended locales (en, pt, jp) with new translation keys: analytics, classrooms, grades, ai_tutor, lesson_generator, generate, users
