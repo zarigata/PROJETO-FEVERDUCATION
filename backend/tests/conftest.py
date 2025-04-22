@@ -9,6 +9,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database import Base, get_db
 from app.main import app
+from app.models import User, UserRole
+from app.security import get_password_hash
 
 # In-memory SQLite for testing
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -19,6 +21,12 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 def init_db():
     # Create tables
     Base.metadata.create_all(bind=engine)
+    # Seed admin user for tests
+    session = TestingSessionLocal()
+    admin = User(email="admin@test.com", password_hash=get_password_hash("password"), role=UserRole.admin)
+    session.add(admin)
+    session.commit()
+    session.close()
     yield
     # Drop tables after tests
     Base.metadata.drop_all(bind=engine)
