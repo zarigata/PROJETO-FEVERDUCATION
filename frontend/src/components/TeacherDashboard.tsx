@@ -42,7 +42,7 @@ const TeacherDashboard: React.FC = () => {
       <section className="mb-6">
         <h2 className="text-xl mb-2">{t('classrooms')}</h2>
         <div className="flex mb-2">
-          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t('classrooms')} className="border p-1 mr-2" />
+          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t('classrooms') as string} className="border p-1 mr-2" />
           <button onClick={createClassroom} className="bg-green-500 text-white px-3 rounded">{t('generate')}</button>
         </div>
         <ul className="list-disc list-inside">

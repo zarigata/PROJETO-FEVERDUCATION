@@ -1,16 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
 
-const api = axios.create({
-  baseURL: '/api',
-});
+const api = axios.create({ baseURL: '/api' });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+    config.headers = new AxiosHeaders(config.headers).set('Authorization', `Bearer ${token}`);
   }
   return config;
 });

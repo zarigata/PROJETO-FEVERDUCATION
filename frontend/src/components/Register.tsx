@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import api from '../api';
 import { useTranslation } from 'react-i18next';
 
-const Login: React.FC = () => {
+/**
+ * CODEX: Simple registration page.
+ * Toggle via REACT_APP_ENABLE_REGISTER env var.
+ */
+const Register: React.FC = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,25 +17,25 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const params = new URLSearchParams();
-      params.append('username', email);
+      params.append('email', email);
       params.append('password', password);
-      const res = await api.post('/auth/login', params);
-      const { access_token } = res.data;
-      localStorage.setItem('token', access_token);
-      // determine user role
-      const me = await api.get('/auth/me');
-      const role = me.data.role;
-      const path = role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/student';
-      navigate(path);
+      // adjust endpoint if needed
+      await api.post('/auth/register', params);
+      alert(t('register_success'));
+      navigate('/login');
     } catch {
-      alert(t('login_error'));
+      alert(t('register_error'));
     }
   };
+
+  if (process.env.REACT_APP_ENABLE_REGISTER !== 'true') {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow w-full max-w-sm">
-        <h1 className="text-2xl mb-4 text-center">{t('login')}</h1>
+        <h1 className="text-2xl mb-4 text-center">{t('register')}</h1>
         <input
           type="email"
           placeholder={t('email') as string}
@@ -46,12 +50,12 @@ const Login: React.FC = () => {
           onChange={e => setPassword(e.target.value)}
           className="w-full mb-3 p-2 border rounded"
         />
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
-          {t('login')}
+        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">
+          {t('register')}
         </button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

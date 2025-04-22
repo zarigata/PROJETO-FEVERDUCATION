@@ -38,8 +38,8 @@ const AdminDashboard: React.FC = () => {
       <section className="mb-6">
         <h2 className="text-xl mb-2">{t('users')}</h2>
         <div className="mb-4 space-y-2">
-          <input type="email" placeholder={t('email')} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="border p-1 mr-2" />
-          <input type="password" placeholder={t('password')} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="border p-1 mr-2" />
+          <input type="email" placeholder={t('email') as string} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="border p-1 mr-2" />
+          <input type="password" placeholder={t('password') as string} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="border p-1 mr-2" />
           <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="border p-1 mr-2">
             <option value="student">{t('student_dashboard')}</option>
             <option value="teacher">{t('teacher_dashboard')}</option>

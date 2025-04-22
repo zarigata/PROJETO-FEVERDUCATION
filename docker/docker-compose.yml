@@ -17,10 +17,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../backend:/app
+      - ../config.yaml:/config.yaml
     ports:
       - "8000:8000"
     depends_on:
       - db
+    restart: always
   frontend:
     build:
       context: ../frontend

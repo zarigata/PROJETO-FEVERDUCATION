@@ -62,7 +62,7 @@ const StudentDashboard: React.FC = () => {
               value={chatInput}
               onChange={e => setChatInput(e.target.value)}
               className="flex-1 border p-2 rounded-l"
-              placeholder={t('ai_tutor')}
+              placeholder={t('ai_tutor') as string}
             />
             <button
               onClick={sendMessage}
