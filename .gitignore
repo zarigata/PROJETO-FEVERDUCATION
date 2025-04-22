@@ -1,0 +1,18 @@
+# Python virtual env
+/backend/venv/
+
+# Byte-compiled files
+/backend/__pycache__/
+/backend/*.py[cod]
+
+# Node modules
+/frontend/node_modules/
+
+# Environment files
+*.env
+
+# Logs
+*.log
+
+# Docker
+/docker/*.env
