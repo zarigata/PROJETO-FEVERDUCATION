@@ -29,27 +29,35 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow w-full max-w-sm">
-        <h1 className="text-2xl mb-4 text-center">{t('login')}</h1>
-        <input
-          type="email"
-          placeholder={t('email') as string}
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="w-full mb-3 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder={t('password') as string}
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="w-full mb-3 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
-          {t('login')}
-        </button>
-      </form>
+    <div className="min-h-screen bg-[var(--bg-color)] flex items-center justify-center transition-colors duration-300 p-4">
+      <div className="card w-full max-w-md p-8 space-y-8 shadow-2xl animate-fade-in">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-[var(--text-color)] transition-colors duration-300">{t('login')}</h2>
+          <p className="mt-2 text-sm text-[var(--text-color)] opacity-80 transition-colors duration-300">Welcome to FeverDucation</p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder={t('email') as string}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="w-full mb-3 p-3 border rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] transition-all duration-200"
+          />
+          <input
+            type="password"
+            placeholder={t('password') as string}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="w-full mb-3 p-3 border rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] transition-all duration-200"
+          />
+          <button type="submit" className="w-full bg-[var(--primary-color)] text-white p-3 rounded-lg font-medium hover:bg-[var(--secondary-color)] transform hover:scale-102 transition-all duration-200">
+            {t('login')}
+          </button>
+        </form>
+        <div className="text-center text-sm text-[var(--text-color)] opacity-70 transition-colors duration-300">
+          <p>FeverDucation {new Date().getFullYear()}</p>
+        </div>
+      </div>
     </div>
   );
 };

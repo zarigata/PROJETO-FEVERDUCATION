@@ -5,6 +5,8 @@ const presets = [
   { label: 'preset_light', file: '/styles/presets/light.css' },
   { label: 'preset_dark', file: '/styles/presets/dark.css' },
   { label: 'preset_high_contrast', file: '/styles/presets/high-contrast.css' },
+  { label: 'preset_sepia', file: '/styles/presets/sepia.css' },
+  { label: 'preset_neon', file: '/styles/presets/neon.css' },
 ];
 
 const CSSSettings: React.FC = () => {

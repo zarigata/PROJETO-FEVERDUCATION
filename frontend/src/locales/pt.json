@@ -11,6 +11,8 @@
   "preset_light": "Claro",
   "preset_dark": "Escuro",
   "preset_high_contrast": "Alto Contraste",
+  "preset_sepia": "Sépia",
+  "preset_neon": "Neon",
   "user_management": "Gerenciamento de Usuários",
   "audit_logs": "Logs de Auditoria",
   "system_status": "Status do Sistema",

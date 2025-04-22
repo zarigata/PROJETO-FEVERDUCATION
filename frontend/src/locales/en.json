@@ -11,6 +11,8 @@
   "preset_light": "Light",
   "preset_dark": "Dark",
   "preset_high_contrast": "High Contrast",
+  "preset_sepia": "Sepia",
+  "preset_neon": "Neon",
   "user_management": "User Management",
   "audit_logs": "Audit Logs",
   "system_status": "System Status",

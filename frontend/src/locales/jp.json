@@ -11,6 +11,8 @@
   "preset_light": "ライト",
   "preset_dark": "ダーク",
   "preset_high_contrast": "ハイコントラスト",
+  "preset_sepia": "セピア",
+  "preset_neon": "ネオン",
   "user_management": "ユーザー管理",
   "audit_logs": "監査ログ",
   "system_status": "システムステータス",

@@ -1,51 +1,51 @@
-/* Light theme preset with enhanced Material Design */
+/* Sepia theme preset for a warm, vintage look */
 body {
-  --bg-color: #f5f5f5;
-  --text-color: #202124;
-  --primary-color: #6200ee;
-  --secondary-color: #03dac6;
-  --accent-color: #e91e63;
-  --card-bg: #ffffff;
-  --border-color: #dadce0;
+  --bg-color: #f4ecd8;
+  --text-color: #5c4b37;
+  --primary-color: #8c6c4f;
+  --secondary-color: #a9896b;
+  --accent-color: #d4a017;
+  --card-bg: #f9f5e8;
+  --border-color: #d2c8a5;
   background-color: var(--bg-color);
   color: var(--text-color);
 }
 
-/* Elegant buttons in light mode */
+/* Vintage buttons */
 button {
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: var(--text-color);
   transition: all 0.3s ease-in-out;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 button:hover {
   background-color: var(--secondary-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(98, 0, 238, 0.2);
+  box-shadow: 0 4px 8px rgba(140, 108, 79, 0.3);
 }
 
-/* Modern card components */
+/* Warm card components */
 .card {
   background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Smooth input fields */
+/* Input fields with vintage touch */
 input, select, textarea {
   background-color: var(--card-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.2);
+  box-shadow: 0 0 0 3px rgba(140, 108, 79, 0.2);
 }
