@@ -1,0 +1,17 @@
+{
+  "login": "Entrar",
+  "email": "Email",
+  "password": "Senha",
+  "login_error": "Falha ao entrar, tente novamente.",
+  "student_dashboard": "Painel do Estudante",
+  "teacher_dashboard": "Painel do Professor",
+  "admin_dashboard": "Painel do Admin",
+  "css_preset_label": "Selecionar Tema CSS",
+  "upload_css_label": "Carregar CSS Personalizado",
+  "preset_light": "Claro",
+  "preset_dark": "Escuro",
+  "preset_high_contrast": "Alto Contraste",
+  "user_management": "Gerenciamento de Usuários",
+  "audit_logs": "Logs de Auditoria",
+  "system_status": "Status do Sistema"
+}

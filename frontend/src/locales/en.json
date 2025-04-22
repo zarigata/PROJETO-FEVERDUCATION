@@ -1,0 +1,17 @@
+{
+  "login": "Login",
+  "email": "Email",
+  "password": "Password",
+  "login_error": "Login failed, please try again.",
+  "student_dashboard": "Student Dashboard",
+  "teacher_dashboard": "Teacher Dashboard",
+  "admin_dashboard": "Admin Dashboard",
+  "css_preset_label": "Select CSS Preset",
+  "upload_css_label": "Upload Custom CSS",
+  "preset_light": "Light",
+  "preset_dark": "Dark",
+  "preset_high_contrast": "High Contrast",
+  "user_management": "User Management",
+  "audit_logs": "Audit Logs",
+  "system_status": "System Status"
+}

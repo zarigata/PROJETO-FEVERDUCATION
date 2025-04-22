@@ -1,0 +1,17 @@
+{
+  "login": "ログイン",
+  "email": "メール",
+  "password": "パスワード",
+  "login_error": "ログインに失敗しました。再度お試しください。",
+  "student_dashboard": "学生ダッシュボード",
+  "teacher_dashboard": "教師ダッシュボード",
+  "admin_dashboard": "管理者ダッシュボード",
+  "css_preset_label": "CSSプリセットを選択",
+  "upload_css_label": "カスタムCSSをアップロード",
+  "preset_light": "ライト",
+  "preset_dark": "ダーク",
+  "preset_high_contrast": "ハイコントラスト",
+  "user_management": "ユーザー管理",
+  "audit_logs": "監査ログ",
+  "system_status": "システムステータス"
+}
