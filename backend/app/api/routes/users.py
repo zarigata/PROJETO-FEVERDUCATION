@@ -8,7 +8,7 @@ from pydantic import BaseModel
 import psycopg2
 from typing import List
 from app.config import config
-from app.api.routes.auth import get_current_user
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
 
@@ -25,10 +25,16 @@ class UserResponse(BaseModel):
     email: str
     role: str
 
+# OAuth2 scheme
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
+
 # Dependency: ensure user is admin
-async def admin_required(current_user: dict = Depends(get_current_user)):
+async def admin_required(token: str = Depends(oauth2_scheme)):
+    from app.api.routes.auth import get_current_user
+    current_user = await get_current_user(token)
     if current_user['role'] != 'admin':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires admin privileges")
+    return current_user
 
 # Establish DB connection helper
 def get_db_connection():
@@ -64,7 +70,7 @@ async def list_users():
 
 # Get user by ID (admin can, user can view self)
 @router.get("/users/{user_id}", response_model=UserResponse)
-async def get_user(user_id: int, current_user: dict = Depends(get_current_user)):
+async def get_user(user_id: int, current_user: dict = Depends(admin_required)):
     if current_user['role'] != 'admin' and current_user['id'] != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     conn = get_db_connection()
