@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -7,6 +8,7 @@ import Assignments from './pages/Assignments';
 import Analytics from './pages/Analytics';
 import AI from './pages/AI';
 import Admin from './pages/Admin';
+import Register from './pages/Register';
 
 // CODEX-STYLE APP ENTRY
 function App() {
@@ -14,6 +16,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Layout><Dashboard/></Layout>} />
         <Route path="/classrooms" element={<Layout><Classrooms/></Layout>} />
         <Route path="/assignments" element={<Layout><Assignments/></Layout>} />

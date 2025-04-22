@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS users (
     timezone VARCHAR(50)
 );
 
+-- Enable pgcrypto extension for crypt() and gen_salt() in Postgres, required for password hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Classrooms table
 CREATE TABLE IF NOT EXISTS classrooms (
     id SERIAL PRIMARY KEY,

@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     try {
       await login(username, password);
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       setError('Invalid username or password');
     }
   };
@@ -76,6 +76,15 @@ const Login: React.FC = () => {
             >
               Don&apos;t have an account? <span className="font-semibold">Sign Up</span>
             </button>
+            <div className="text-center mt-2">
+              <button
+                type="button"
+                className="text-gray-500 hover:text-gray-700 text-sm"
+                onClick={() => navigate('/admin')}
+              >
+                Go to Admin Portal
+              </button>
+            </div>
           </div>
         </div>
       </div>

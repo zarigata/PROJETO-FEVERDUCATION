@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import yaml
 import os
@@ -20,7 +21,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[config["frontend"]["url"]],  # restrict to frontend
+    allow_origins=["*"],  # dev: allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
