@@ -1,14 +1,15 @@
 # CODEX: Authentication and authorization routes
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
 from app.database import get_db
 from app.models import User, UserRole
-from app.security import verify_password, create_access_token, create_refresh_token
+from app.security import verify_password, create_access_token, create_refresh_token, get_password_hash
 from app.config import JWT_SECRET_KEY, JWT_ALGORITHM
+from app.schemas import UserRead
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -77,6 +78,22 @@ def refresh_token(data: TokenRefresh, db: Session = Depends(get_db)):
         raise credentials_exception
     access_token = create_access_token({"sub": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}
+
+# CODEX: Public registration endpoint
+class RegisterModel(BaseModel):
+    email: EmailStr
+    password: str
+
+@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+def register(data: RegisterModel, db: Session = Depends(get_db)):
+    if db.query(User).filter(User.email == data.email).first():
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+    hashed = get_password_hash(data.password)
+    user = User(email=data.email, password_hash=hashed, role=UserRole.student)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
 
 @router.get("/me")
 def read_users_me(current_user: User = Depends(get_current_active_user)):

@@ -16,14 +16,14 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const params = new URLSearchParams();
-      params.append('email', email);
-      params.append('password', password);
-      // adjust endpoint if needed
-      await api.post('/auth/register', params);
+      // send JSON payload to match FastAPI
+      const payload = { email, password };
+      const res = await api.post('/auth/register', payload);
+      console.log('register response', res.data);
       alert(t('register_success'));
       navigate('/login');
-    } catch {
+    } catch (error) {
+      console.error('register error', error);
       alert(t('register_error'));
     }
   };

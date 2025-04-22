@@ -2,7 +2,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.database import Base, engine
+from app.database import Base, engine, SessionLocal
+import os
+from app.models import User, UserRole
+from app.security import get_password_hash
 from app.routers.auth import router as auth_router
 from app.routers.users import router as users_router
 from app.routers.classrooms import router as classrooms_router
@@ -22,11 +25,29 @@ app = FastAPI(
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TODO: restrict in production
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# CODEX: Create DB tables on startup (development only)
+Base.metadata.create_all(bind=engine)
+
+# CODEX: Auto-create default admin user on startup
+def create_default_admin():
+    admin_email = os.getenv("ADMIN_EMAIL")
+    admin_password = os.getenv("ADMIN_PASSWORD")
+    if admin_email and admin_password:
+        db = SessionLocal()
+        try:
+            if not db.query(User).filter(User.email == admin_email).first():
+                hashed = get_password_hash(admin_password)
+                admin = User(email=admin_email, password_hash=hashed, role=UserRole.admin)
+                db.add(admin)
+                db.commit()
+        finally:
+            db.close()
+create_default_admin()
 
 # Include routers
 app.include_router(auth_router, prefix="/api")
