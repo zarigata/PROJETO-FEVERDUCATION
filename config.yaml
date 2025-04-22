@@ -9,3 +9,7 @@ languages:
   - en
   - es
   - fr
+jwt_secret_key: "supersecretkey"
+jwt_algorithm: "HS256"
+access_token_expires_minutes: 30
+refresh_token_expires_minutes: 1440
