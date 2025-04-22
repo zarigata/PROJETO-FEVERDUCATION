@@ -1,0 +1,20 @@
+# CODEX: Dockerfile for frontend service
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy application code
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Serve via nginx
+FROM nginx:stable-alpine
+COPY --from=0 /app/build /usr/share/nginx/html
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]
