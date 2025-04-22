@@ -12,9 +12,6 @@ from app.routers.analytics import router as analytics_router
 from app.routers.audit_logs import router as audit_logs_router
 from app.routers.ai import router as ai_router
 
-# Create all tables
-Base.metadata.create_all(bind=engine)
-
 # Initialize FastAPI app
 app = FastAPI(
     title="FeverDucation API",
