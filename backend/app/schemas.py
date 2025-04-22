@@ -1,0 +1,92 @@
+# CODEX: Pydantic schemas for FeverDucation
+from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel, EmailStr
+from app.models import UserRole
+
+# User schemas
+class UserBase(BaseModel):
+    email: EmailStr
+    role: UserRole
+    timezone: Optional[str] = "UTC"
+
+class UserCreate(UserBase):
+    password: str
+
+class UserRead(UserBase):
+    id: int
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr]
+    password: Optional[str]
+    role: Optional[UserRole]
+    timezone: Optional[str]
+
+# Classroom schemas
+class ClassroomBase(BaseModel):
+    name: str
+
+class ClassroomCreate(ClassroomBase):
+    pass
+
+class ClassroomRead(ClassroomBase):
+    id: int
+    teacher_id: int
+    created_at: datetime
+    students: List[UserRead] = []
+    class Config:
+        orm_mode = True
+
+# Assignment schemas
+class AssignmentBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    due_date: Optional[datetime] = None
+
+class AssignmentCreate(AssignmentBase):
+    classroom_id: int
+
+class AssignmentRead(AssignmentBase):
+    id: int
+    classroom_id: int
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+# Grade schemas
+class GradeBase(BaseModel):
+    score: int
+
+class GradeCreate(GradeBase):
+    student_id: int
+    assignment_id: int
+
+class GradeRead(GradeBase):
+    id: int
+    student_id: int
+    assignment_id: int
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+# Analytics schema
+class AnalyticsRead(BaseModel):
+    id: int
+    student_id: Optional[int]
+    teacher_id: Optional[int]
+    data: dict
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+# Audit log schema
+class AuditLogRead(BaseModel):
+    id: int
+    user_id: Optional[int]
+    action: str
+    timestamp: datetime
+    class Config:
+        orm_mode = True
