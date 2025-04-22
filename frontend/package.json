@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.4",
     "autoprefixer": "^10.4.21",
     "axios": "^1.8.4",
+    "frontend": "file:",
     "i18next": "^25.0.1",
     "postcss": "^8.5.3",
     "react": "^19.0.0",

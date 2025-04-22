@@ -11,6 +11,7 @@ import psycopg2
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from app.config import config
+from app.api.routes.users import get_db_connection, UserResponse
 
 # Initialize router for auth endpoints
 router = APIRouter()
@@ -103,6 +104,25 @@ async def refresh_token(req: RefreshRequest):
         )
     new_token = create_access_token({"sub": username, "user_id": user_id, "role": role})
     return {"access_token": new_token, "token_type": "bearer"}
+
+# Public registration endpoint
+class RegisterRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+
+@router.post("/register", response_model=UserResponse)
+async def register_user(data: RegisterRequest):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO users (username, email, hashed_password, role) VALUES (%s, %s, crypt(%s, gen_salt('bf')), %s) RETURNING id, username, email, role",
+        (data.username, data.email, data.password, 'student')
+    )
+    new_user = cur.fetchone()
+    conn.commit()
+    conn.close()
+    return {"id": new_user[0], "username": new_user[1], "email": new_user[2], "role": new_user[3]}
 
 # Dependency: extract current user from token
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:

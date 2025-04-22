@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 // CODEX-STYLE LOGIN PAGE
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: integrate API login
-    navigate('/dashboard');
+    try {
+      await login(username, password);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Login failed', err);
+    }
   };
 
   return (

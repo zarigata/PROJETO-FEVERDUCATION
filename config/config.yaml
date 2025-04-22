@@ -1,62 +1,38 @@
-# FeverDucation Platform Configuration
+# Configuration for FeverDucation platform
 
-# Database Configuration
-database:
-  host: postgres
-  port: 5432
-  username: postgres
-  password: feverducation_password
-  database: feverducation
-
-# Ollama Configuration
+# Ollama AI settings
 ollama:
-  host: ollama
-  port: 11434
-  model: llama2
-  context_window: 4096
-  temperature: 0.7
-  max_tokens: 2048
+  # Ollama external server configuration
+  host: "<OLLAMA_HOST_OR_IP>"   # e.g., "192.168.1.100" or hostname
+  port: 11434                  # Ollama API port
+  model: "llama3.2"            # default model selection
+  style_preferences:            # response style customization
+    tone: "conversational"     # e.g., "formal", "friendly"
+    response_format: "text"    # e.g., "text", "json"
+  pre_prompt: |                  # system prompt prepended to every user query
+    You are an AI tutor for the FeverDucation platform.
+    Provide clear, concise, and engaging educational responses.
 
-# Admin Configuration
-admin:
-  username: admin
-  password: admin_password  # Will be hashed during initialization
-  email: admin@feverducation.com
-
-# Security Configuration
-security:
-  secret_key: "your_secret_key_here"  # Change in production
-  algorithm: HS256
-  access_token_expire_minutes: 30
-  refresh_token_expire_days: 7
-
-# Server Configuration
-server:
-  host: 0.0.0.0
-  port: 8000
-  debug: true  # Set to false in production
-
-# Frontend Configuration
+# Frontend
 frontend:
-  url: http://localhost:3000
-  api_url: http://localhost:8000/api
+  url: "http://localhost:5173"
 
-# Internationalization
-i18n:
-  default_language: en
-  available_languages: [en, es]
+# Database credentials
+database:
+  host: "postgres"
+  port: 5432
+  name: "feverducation"
+  user: "postgres"
+  password: "feverducation_password"
 
-# Logging Configuration
-logging:
-  level: INFO
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: logs/feverducation.log
+# Admin user credentials
+admin:
+  username: "admin"
+  password: "change_me"
+  email: "admin@feverducation.com"
 
-# Email Configuration (for notifications)
-email:
-  enabled: false
-  smtp_server: smtp.example.com
-  smtp_port: 587
-  username: notifications@feverducation.com
-  password: email_password
-  from_email: notifications@feverducation.com
+# JWT settings
+jwt:
+  secret_key: "your_secret_key"
+  algorithm: "HS256"
+  access_token_expire_minutes: 60
