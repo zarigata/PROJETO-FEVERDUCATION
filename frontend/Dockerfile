@@ -10,6 +10,9 @@ RUN npm install
 # Copy application code
 COPY . .
 
+# Copy CSS presets
+RUN mkdir -p public/styles/presets && cp -r src/styles/presets/* public/styles/presets/
+
 # Build the React app
 RUN npm run build
 
