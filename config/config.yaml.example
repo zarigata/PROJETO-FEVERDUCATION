@@ -1,0 +1,30 @@
+# Configuration for FeverDucation platform
+
+# Ollama AI settings
+ollama:
+  url: "http://ollama:11434"
+  model: "llama3.2"
+
+# Frontend
+frontend:
+  url: "http://localhost:3000"
+
+# Database credentials
+database:
+  host: "postgres"
+  port: 5432
+  name: "feverducation"
+  user: "postgres"
+  password: "your_db_password"
+
+# Admin user credentials
+admin:
+  username: "admin"
+  password: "change_me"
+  email: "admin@feverducation.com"
+
+# JWT settings
+jwt:
+  secret_key: "your_secret_key"
+  algorithm: "HS256"
+  access_token_expire_minutes: 60
