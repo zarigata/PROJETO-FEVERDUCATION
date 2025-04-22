@@ -72,6 +72,22 @@ This document details all code and configuration changes made to implement Steps
 
 ---
 
+## Step 3: Frontend Development
+- Added `src/api.ts` as central API client with auth interceptor.
+- Created components:
+  - `CSSSettings.tsx` (CSS presets & custom CSS upload)
+  - `StudentDashboard.tsx` (analytics, classrooms, grades, AI Tutor chat)
+  - `TeacherDashboard.tsx` (analytics, classroom CRUD, lesson generator)
+  - `AdminDashboard.tsx` (user management, audit logs, system status)
+  - `PrivateRoute.tsx` for role-based route protection
+- Updated `Login.tsx` to use API client and redirect based on user role
+- Wrapped protected routes with `PrivateRoute` in `App.tsx`
+- Added `public/styles/fonts.css` with Roboto & Noto Sans JP; linked in `public/index.html`
+- Added CSS preset files under `src/styles/presets` (light, dark, high-contrast)
+- Extended locales (en, pt, jp) with new translation keys: analytics, classrooms, grades, ai_tutor, lesson_generator, generate, users
+
+---
+
 ## Step 4: Frontend Development
 - Added `src/api.ts` as central API client with auth interceptor.
 - Created components:
@@ -85,3 +101,26 @@ This document details all code and configuration changes made to implement Steps
 - Added `public/styles/fonts.css` with Roboto & Noto Sans JP; linked in `public/index.html`
 - Added CSS preset files under `src/styles/presets` (light, dark, high-contrast)
 - Extended locales (en, pt, jp) with new translation keys: analytics, classrooms, grades, ai_tutor, lesson_generator, generate, users
+
+---
+
+## Step 5: Registration & Admin Provisioning
+
+1. **Backend:**
+   - Added `/auth/register` endpoint with `RegisterModel` and `response_model=UserRead`.
+   - Hashed passwords via `get_password_hash` and created tables on startup (`Base.metadata.create_all`).
+   - Seeded default admin using `create_default_admin()` reading `ADMIN_EMAIL`/`ADMIN_PASSWORD` from `.env`.
+
+2. **Frontend:**
+   - Updated `src/api.ts` baseURL to include `/api` prefix.
+   - Modified `Register.tsx` to send JSON payload, log responses/errors, and navigate on success.
+
+3. **CORS & Proxy:**
+   - Restricted CORS origins in `main.py` to `http://localhost:3000` and `http://localhost:3001`.
+   - Added `frontend/nginx.conf` to proxy `/api/` to backend and fallback to `index.html` for SPA.
+   - Updated `frontend/Dockerfile` to use Nginx on port 80 and copy `nginx.conf`.
+   - Remapped ports in `docker-compose.yml` (frontend: `3000:80`) and added `env_file` for backend.
+
+4. **Environment Management:**
+   - Created `.env.example` with `ADMIN_EMAIL` and `ADMIN_PASSWORD` presets.
+   - Configured backend service in `docker-compose.yml` to load root `.env` via `env_file`.
