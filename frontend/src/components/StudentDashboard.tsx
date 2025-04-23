@@ -72,34 +72,139 @@ const StudentDashboard: React.FC = () => {
             <section className="mb-6">
               <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('analytics')}</h2>
               
+              {/* CODEX: Student profile and level section with gamification */}
+              <div className="card-neumorphic p-6 mb-8">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] flex items-center justify-center text-white text-2xl font-bold">
+                      {/* Student initials or avatar */}
+                      JS
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 badge badge-intermediate achievement-unlocked">
+                      Lvl 12
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-[var(--text-color)] mb-2">John Smith</h3>
+                    <p className="text-[var(--text-color)] opacity-80 mb-4">Computer Science Student</p>
+                    
+                    <div className="mb-4">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm font-medium text-[var(--text-color)]">Experience</span>
+                        <span className="text-sm font-medium text-[var(--primary-color)]">1,250 / 2,000 XP</span>
+                      </div>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '62.5%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      <div className="badge badge-beginner">Python Novice</div>
+                      <div className="badge badge-intermediate">Math Enthusiast</div>
+                      <div className="badge">5-Day Streak</div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center md:text-right">
+                    <div className="text-4xl font-bold text-[var(--primary-color)] mb-1">87</div>
+                    <div className="text-sm text-[var(--text-color)] opacity-70">Overall Score</div>
+                  </div>
+                </div>
+              </div>
+              
               {/* CODEX: Analytics cards with visual representations */}
+              <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">Your Progress</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {analytics.length > 0 ? analytics.map((item, i) => (
-                  <div key={i} className="bg-[var(--bg-color)] p-4 rounded-lg shadow-inner border border-[var(--border-color)] transition-colors duration-300">
-                    <h3 className="font-medium text-[var(--text-color)]">{item.label}</h3>
+                  <div key={i} className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">{item.label}</h3>
                     <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">{item.value}</p>
+                    {item.change && (
+                      <div className={`text-sm mt-2 ${parseFloat(item.change) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {parseFloat(item.change) >= 0 ? '↑' : '↓'} {Math.abs(parseFloat(item.change))}% from last week
+                      </div>
+                    )}
                   </div>
                 )) : 
                 <>
-                  <div className="bg-[var(--bg-color)] p-4 rounded-lg shadow-inner border border-[var(--border-color)] transition-colors duration-300">
-                    <h3 className="font-medium text-[var(--text-color)]">Course Progress</h3>
-                    <div className="mt-2 h-3 bg-[var(--bg-color-hover)] rounded-full overflow-hidden">
-                      <div className="h-full bg-[var(--primary-color)] rounded-full" style={{ width: '65%' }}></div>
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">Course Progress</h3>
+                    <div className="progress-container">
+                      <div className="progress-bar" style={{ width: '65%' }}></div>
                     </div>
-                    <p className="mt-1 text-lg font-medium text-[var(--primary-color)]">65%</p>
+                    <div className="flex justify-between mt-2">
+                      <p className="text-lg font-medium text-[var(--primary-color)]">65%</p>
+                      <p className="text-sm text-[var(--text-color)] opacity-70">+5% this week</p>
+                    </div>
                   </div>
-                  <div className="bg-[var(--bg-color)] p-4 rounded-lg shadow-inner border border-[var(--border-color)] transition-colors duration-300">
-                    <h3 className="font-medium text-[var(--text-color)]">Assignments</h3>
-                    <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">7/10</p>
-                    <p className="text-[var(--text-color)] opacity-70">Completed</p>
+                  
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">Assignments</h3>
+                    <div className="flex items-end gap-2">
+                      <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">7</p>
+                      <p className="text-xl text-[var(--text-color)] opacity-70 mb-1">/10</p>
+                    </div>
+                    <div className="mt-2 flex justify-between">
+                      <p className="text-[var(--text-color)] opacity-70">Completed</p>
+                      <p className="text-sm text-green-500">2 days ahead of schedule</p>
+                    </div>
                   </div>
-                  <div className="bg-[var(--bg-color)] p-4 rounded-lg shadow-inner border border-[var(--border-color)] transition-colors duration-300">
-                    <h3 className="font-medium text-[var(--text-color)]">Study Time</h3>
+                  
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">Study Time</h3>
                     <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">12.5h</p>
-                    <p className="text-[var(--text-color)] opacity-70">This week</p>
+                    <div className="mt-2 flex justify-between">
+                      <p className="text-[var(--text-color)] opacity-70">This week</p>
+                      <p className="text-sm text-green-500">↑ 2.5h from last week</p>
+                    </div>
                   </div>
                 </>
                 }
+              </div>
+              
+              {/* CODEX: Recent achievements section */}
+              <h3 className="text-xl font-semibold text-[var(--text-color)] mt-8 mb-4 transition-colors duration-300">Recent Achievements</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div className="card-neumorphic p-4 text-center hover-scale">
+                  <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-[var(--primary-color)] flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-[var(--text-color)]">Quick Learner</h4>
+                  <p className="text-xs text-[var(--text-color)] opacity-70">Completed 3 lessons in a day</p>
+                </div>
+                
+                <div className="card-neumorphic p-4 text-center hover-scale">
+                  <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-[var(--secondary-color)] flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-[var(--text-color)]">Early Bird</h4>
+                  <p className="text-xs text-[var(--text-color)] opacity-70">Studied before 7 AM</p>
+                </div>
+                
+                <div className="card-neumorphic p-4 text-center hover-scale">
+                  <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-green-500 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-[var(--text-color)]">Perfect Score</h4>
+                  <p className="text-xs text-[var(--text-color)] opacity-70">100% on Math Quiz</p>
+                </div>
+                
+                <div className="card-neumorphic p-4 text-center hover-scale">
+                  <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-purple-500 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-[var(--text-color)]">Team Player</h4>
+                  <p className="text-xs text-[var(--text-color)] opacity-70">Helped 5 classmates</p>
+                </div>
               </div>
             </section>
           )}
