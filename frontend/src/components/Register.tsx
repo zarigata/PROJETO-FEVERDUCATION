@@ -11,13 +11,14 @@ const Register: React.FC = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<string>('student');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       // send JSON payload to match FastAPI
-      const payload = { email, password };
+      const payload = { email, password, role };
       const res = await api.post('/auth/register', payload);
       console.log('register response', res.data);
       alert(t('register_success'));
@@ -50,6 +51,15 @@ const Register: React.FC = () => {
           onChange={e => setPassword(e.target.value)}
           className="w-full mb-3 p-2 border rounded"
         />
+        <select
+          value={role}
+          onChange={e => setRole(e.target.value)}
+          className="w-full mb-3 p-2 border rounded"
+        >
+          <option value="student">{t('student') as string}</option>
+          <option value="teacher">{t('teacher') as string}</option>
+          <option value="admin">{t('admin') as string}</option>
+        </select>
         <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">
           {t('register')}
         </button>

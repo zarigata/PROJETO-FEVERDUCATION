@@ -1,0 +1,8 @@
+/* High Contrast theme preset */
+body {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+a { color: var(--text-color); }

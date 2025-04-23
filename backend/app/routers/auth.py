@@ -83,13 +83,14 @@ def refresh_token(data: TokenRefresh, db: Session = Depends(get_db)):
 class RegisterModel(BaseModel):
     email: EmailStr
     password: str
+    role: UserRole
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 def register(data: RegisterModel, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == data.email).first():
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     hashed = get_password_hash(data.password)
-    user = User(email=data.email, password_hash=hashed, role=UserRole.student)
+    user = User(email=data.email, password_hash=hashed, role=data.role)
     db.add(user)
     db.commit()
     db.refresh(user)

@@ -1,6 +1,8 @@
 # CODEX: Dockerfile for frontend service
 # Enhanced to ensure all style files are properly included
 FROM node:18-alpine
+ARG REACT_APP_ENABLE_REGISTER=false
+ENV REACT_APP_ENABLE_REGISTER $REACT_APP_ENABLE_REGISTER
 
 WORKDIR /app
 

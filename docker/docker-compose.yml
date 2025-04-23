@@ -29,6 +29,8 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+      args:
+        REACT_APP_ENABLE_REGISTER: "true"
     volumes:
       - ../frontend:/app
     ports:
