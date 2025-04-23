@@ -1,5 +1,6 @@
 {
   "login": "Entrar",
+  "logout": "Sair",
   "email": "Email",
   "password": "Senha",
   "login_error": "Falha ao entrar, tente novamente.",
@@ -22,5 +23,22 @@
   "ai_tutor": "Tutor AI",
   "lesson_generator": "Gerador de Lições",
   "generate": "Gerar",
-  "users": "Usuários"
+  "users": "Usuários",
+  
+  "welcome_back": "Bem-vindo de Volta",
+  "login_to_your_account": "Entre na sua conta FeverEducation",
+  "teacher": "Professor",
+  "student": "Aluno",
+  "forgot_password": "Esqueceu a senha?",
+  "dont_have_account": "Não tem uma conta?",
+  "register": "Cadastrar",
+  "back_to_home": "Voltar para Início",
+  
+  "settings": "Configurações",
+  "theme_settings": "Configurações de Tema",
+  "language_settings": "Configurações de Idioma",
+  "language_help_text": "Escolha seu idioma preferido para a interface",
+  "terms": "Termos",
+  "privacy": "Privacidade",
+  "help": "Ajuda"
 }

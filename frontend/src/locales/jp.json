@@ -1,5 +1,6 @@
 {
   "login": "ログイン",
+  "logout": "ログアウト",
   "email": "メール",
   "password": "パスワード",
   "login_error": "ログインに失敗しました。再度お試しください。",
@@ -22,5 +23,22 @@
   "ai_tutor": "AIチューター",
   "lesson_generator": "レッスンジェネレーター",
   "generate": "生成",
-  "users": "ユーザー"
+  "users": "ユーザー",
+  
+  "welcome_back": "おかえりなさい",
+  "login_to_your_account": "FeverEducationアカウントにサインイン",
+  "teacher": "教師",
+  "student": "学生",
+  "forgot_password": "パスワードをお忘れですか？",
+  "dont_have_account": "アカウントをお持ちでないですか？",
+  "register": "登録",
+  "back_to_home": "ホームに戻る",
+  
+  "settings": "設定",
+  "theme_settings": "テーマ設定",
+  "language_settings": "言語設定",
+  "language_help_text": "インターフェースの言語を選択してください",
+  "terms": "利用規約",
+  "privacy": "プライバシー",
+  "help": "ヘルプ"
 }
