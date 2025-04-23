@@ -1,7 +1,7 @@
 # CODEX: SQLAlchemy models defining the database schema for FeverDucation
 import enum
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table, JSON
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table, JSON, Date
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -27,6 +27,10 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.student, nullable=False)
     timezone = Column(String, default="UTC")
     created_at = Column(DateTime, default=datetime.utcnow)
+    # CODEX: profile fields
+    name = Column(String, nullable=True)
+    birthday = Column(Date, nullable=True)
+    profile_photo = Column(String, nullable=True)
 
     # Relationships
     taught_classrooms = relationship("Classroom", back_populates="teacher")

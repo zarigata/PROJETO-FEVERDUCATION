@@ -1,5 +1,5 @@
 # CODEX: Pydantic schemas for FeverDucation
-from datetime import datetime
+from datetime import datetime, date
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 from app.models import UserRole
@@ -16,6 +16,9 @@ class UserCreate(UserBase):
 class UserRead(UserBase):
     id: int
     created_at: datetime
+    name: Optional[str] = None
+    birthday: Optional[date] = None
+    profile_photo: Optional[str] = None
     class Config:
         orm_mode = True
 
@@ -24,6 +27,9 @@ class UserUpdate(BaseModel):
     password: Optional[str]
     role: Optional[UserRole]
     timezone: Optional[str]
+    name: Optional[str]
+    birthday: Optional[date]
+    profile_photo: Optional[str]
 
 # Classroom schemas
 class ClassroomBase(BaseModel):

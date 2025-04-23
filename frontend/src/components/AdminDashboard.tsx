@@ -18,6 +18,7 @@ const AdminDashboard: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [status, setStatus] = useState<string>('');
   const [form, setForm] = useState({ email: '', password: '', role: 'student', timezone: 'UTC', language: 'en' });
+  const [editingUser, setEditingUser] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +54,39 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleEditClick = (user: any) => {
+    setEditingUser(user);
+    setForm({ email: user.email, password: '', role: user.role, timezone: user.timezone || 'UTC', language: user.language || 'en' });
+  };
+
+  const updateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await api.put(`/users/${editingUser.id}`, form);
+      setUsers(prev => prev.map(u => u.id === res.data.id ? res.data : u));
+      setEditingUser(null);
+      setForm({ email: '', password: '', role: 'student', timezone: 'UTC', language: 'en' });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingUser(null);
+    setForm({ email: '', password: '', role: 'student', timezone: 'UTC', language: 'en' });
+  };
+
+  const deleteUser = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await api.delete(`/users/${id}`);
+        setUsers(prev => prev.filter(u => u.id !== id));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   return (
     <DashboardLayout title={t('admin_dashboard')}>
       <div className="space-y-6 transition-all duration-300">
@@ -75,6 +109,29 @@ const AdminDashboard: React.FC = () => {
                   </button>
                 </div>
               </form>
+              {editingUser && (
+                <form onSubmit={updateUser} className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-[var(--bg-color)] p-4 rounded-lg border border-[var(--border-color)]">
+                  <input name="email" value={form.email} onChange={handleInput} placeholder="Email" className="p-2 border rounded-lg" />
+                  <input name="password" type="password" value={form.password} onChange={handleInput} placeholder="New Password" className="p-2 border rounded-lg" />
+                  <select name="role" value={form.role} onChange={handleInput} className="p-2 border rounded-lg">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <input name="timezone" value={form.timezone} onChange={handleInput} placeholder="Timezone" className="p-2 border rounded-lg" />
+                  <select name="language" value={form.language} onChange={handleInput} className="p-2 border rounded-lg">
+                    <option value="en">English</option>
+                    <option value="pt">Português</option>
+                    <option value="jp">日本語</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                  </select>
+                  <div className="md:col-span-3 flex gap-2">
+                    <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg">Save</button>
+                    <button type="button" onClick={cancelEdit} className="bg-gray-500 text-white px-4 py-2 rounded-lg">Cancel</button>
+                  </div>
+                </form>
+              )}
               <div className="overflow-x-auto mt-4">
                 <table className="min-w-full divide-y divide-[var(--border-color)] transition-colors duration-300">
                   <thead className="bg-[var(--bg-color)] transition-colors duration-300">
@@ -84,6 +141,7 @@ const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Role</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Timezone</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Language</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--card-bg)] divide-y divide-[var(--border-color)] transition-colors duration-300">
@@ -94,6 +152,10 @@ const AdminDashboard: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.role}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.timezone || 'UTC'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.language || 'en'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
+                          <button onClick={() => handleEditClick(user)} className="text-blue-500 mr-2">Edit</button>
+                          <button onClick={() => deleteUser(user.id)} className="text-red-500">Delete</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

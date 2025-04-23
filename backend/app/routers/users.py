@@ -49,6 +49,13 @@ def update_user(user_id: int, user_in: UserUpdate, current_user: User = Depends(
         target.role = user_in.role
     if user_in.timezone:
         target.timezone = user_in.timezone
+    # CODEX: profile update fields
+    if user_in.name is not None:
+        target.name = user_in.name
+    if user_in.birthday is not None:
+        target.birthday = user_in.birthday
+    if user_in.profile_photo is not None:
+        target.profile_photo = user_in.profile_photo
     db.commit()
     db.refresh(target)
     return target

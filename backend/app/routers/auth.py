@@ -96,6 +96,6 @@ def register(data: RegisterModel, db: Session = Depends(get_db)):
     db.refresh(user)
     return user
 
-@router.get("/me")
+@router.get("/me", response_model=UserRead)
 def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user

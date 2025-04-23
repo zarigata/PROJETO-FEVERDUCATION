@@ -11,6 +11,7 @@ const StudentDashboard: React.FC = () => {
     { key: 'classrooms', label: t('classrooms') },
     { key: 'grades', label: t('grades') },
     { key: 'ai_tutor', label: t('ai_tutor') },
+    { key: 'profile', label: t('profile') },
   ];
   const [activeTab, setActiveTab] = useState<string>('analytics');
   const [analytics, setAnalytics] = useState<any[]>([]);
@@ -18,19 +19,27 @@ const StudentDashboard: React.FC = () => {
   const [grades, setGrades] = useState<any[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [profileForm, setProfileForm] = useState<{ name: string; birthday: string; profile_photo: string }>({ name: '', birthday: '', profile_photo: '' });
 
   useEffect(() => {
-    // CODEX: Fetch data with proper error handling and loading states
     const fetchData = async () => {
       try {
-        const [analyticsRes, classroomsRes, gradesRes] = await Promise.all([
+        const [analyticsRes, classroomsRes, gradesRes, userRes] = await Promise.all([
           api.get('/analytics'),
           api.get('/classrooms'),
-          api.get('/grades')
+          api.get('/grades'),
+          api.get('/auth/me'),
         ]);
         setAnalytics(analyticsRes.data);
         setClassrooms(classroomsRes.data);
         setGrades(gradesRes.data);
+        setUser(userRes.data);
+        setProfileForm({
+          name: userRes.data.name || '',
+          birthday: userRes.data.birthday || '',
+          profile_photo: userRes.data.profile_photo || '',
+        });
       } catch (err) {
         console.error('Error fetching student data:', err);
       }
@@ -41,13 +50,11 @@ const StudentDashboard: React.FC = () => {
   const sendMessage = async () => {
     if (!chatInput.trim()) return;
     
-    // CODEX: Add user message to chat
     const userMessage = chatInput;
     setMessages(prev => [...prev, { sender: 'user', text: userMessage }]);
     setChatInput('');
     
     try {
-      // CODEX: Use Ollama for AI responses with llama3.2 model
       const res = await api.post('/ollama/generate', { 
         model: 'llama3.2', 
         prompt: `You are an AI tutor helping a student. Answer this question: ${userMessage}` 
@@ -60,6 +67,31 @@ const StudentDashboard: React.FC = () => {
         sender: 'bot', 
         text: 'Sorry, I had trouble processing your request. Please try again.' 
       }]);
+    }
+  };
+
+  const handleProfileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfileForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProfileForm(prev => ({ ...prev, profile_photo: reader.result as string }));
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const saveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    try {
+      const res = await api.put(`/users/${user.id}`, profileForm);
+      setUser(res.data);
+    } catch (err) {
+      console.error('Error saving profile:', err);
     }
   };
 
@@ -542,6 +574,29 @@ const StudentDashboard: React.FC = () => {
                   <p className="mt-2 text-xs text-[var(--text-color)] opacity-60 text-center">Powered by Llama 3.2 - Your AI learning assistant</p>
                 </div>
               </div>
+            </section>
+          )}
+          {activeTab === 'profile' && (
+            <section className="mb-6">
+              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('profile')}</h2>
+              <form onSubmit={saveProfile} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium">{t('name')}</label>
+                  <input name="name" value={profileForm.name} onChange={handleProfileInput} className="p-2 border rounded-lg w-full" />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium">{t('birthday')}</label>
+                  <input name="birthday" type="date" value={profileForm.birthday} onChange={handleProfileInput} className="p-2 border rounded-lg w-full" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block mb-1 text-sm font-medium">{t('profile_photo')}</label>
+                  <input name="profile_photo" type="file" accept="image/*" onChange={handlePhotoChange} className="p-2 border rounded-lg w-full" />
+                  {profileForm.profile_photo && <img src={profileForm.profile_photo} alt="Profile" className="mt-2 w-32 h-32 object-cover rounded-full" />}
+                </div>
+                <div className="md:col-span-2">
+                  <button type="submit" className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200">{t('save')}</button>
+                </div>
+              </form>
             </section>
           )}
         </div>

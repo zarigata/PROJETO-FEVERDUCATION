@@ -24,7 +24,11 @@
   "lesson_generator": "Lesson Generator",
   "generate": "Generate",
   "users": "Users",
-  
+  "profile": "Profile",
+  "name": "Name",
+  "birthday": "Birthday",
+  "profile_photo": "Profile Photo",
+  "save": "Save",
   "welcome_back": "Welcome Back",
   "login_to_your_account": "Sign in to your FeverEducation account",
   "teacher": "Professor",
