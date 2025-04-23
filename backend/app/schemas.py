@@ -1,12 +1,12 @@
 # CODEX: Pydantic schemas for FeverDucation
 from datetime import datetime, date
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from app.models import UserRole
 
 # User schemas
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
     role: UserRole
     timezone: Optional[str] = "UTC"
 
@@ -23,7 +23,7 @@ class UserRead(UserBase):
         orm_mode = True
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr]
+    email: Optional[str]
     password: Optional[str]
     role: Optional[UserRole]
     timezone: Optional[str]

@@ -1,7 +1,7 @@
 # CODEX: Authentication and authorization routes
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
@@ -81,7 +81,7 @@ def refresh_token(data: TokenRefresh, db: Session = Depends(get_db)):
 
 # CODEX: Public registration endpoint
 class RegisterModel(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     role: UserRole
 
