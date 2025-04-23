@@ -21,6 +21,15 @@
     -12px -12px 20px rgba(255, 255, 255, 0.15);
 }
 
+/* Hover scale effect for cards and elements */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
 /* Progress bars with animation */
 .progress-container {
   width: 100%;
@@ -100,7 +109,21 @@
 
 /* Achievement unlocked animation */
 .achievement-unlocked {
-  animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: pulse 1.5s infinite, pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 5;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(251, 146, 60, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0);
+  }
 }
 
 @keyframes pop-in {

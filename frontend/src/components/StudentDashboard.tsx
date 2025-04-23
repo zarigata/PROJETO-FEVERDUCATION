@@ -213,68 +213,238 @@ const StudentDashboard: React.FC = () => {
             <section className="mb-6">
               <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('classrooms')}</h2>
               
-              {/* CODEX: Classroom cards with visual indicators */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {classrooms.length > 0 ? classrooms.map((room) => (
-                  <div key={room.id} className="bg-[var(--bg-color)] p-6 rounded-lg shadow-md border border-[var(--border-color)] transition-colors duration-300 hover:shadow-lg transition-shadow duration-200">
-                    <h3 className="font-bold text-xl text-[var(--text-color)] mb-2">{room.name}</h3>
-                    <div className="flex items-center text-[var(--text-color)] opacity-80 mb-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                      </svg>
-                      <span>24 Students</span>
+              {/* CODEX: Weekly schedule timeline */}
+              <div className="card-neumorphic p-5 mb-6">
+                <h3 className="text-xl font-semibold text-[var(--text-color)] mb-3">This Week's Schedule</h3>
+                <div className="flex overflow-x-auto pb-2 space-x-4">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, index) => (
+                    <div key={day} className={`flex-shrink-0 w-40 ${index === 1 ? 'border-l-4 border-[var(--primary-color)]' : ''} p-3 rounded-lg ${index === 1 ? 'bg-[var(--bg-color-hover)]' : 'bg-[var(--bg-color)]'}`}>
+                      <div className="font-medium text-[var(--text-color)] mb-2">{day}</div>
+                      {index === 0 && (
+                        <div className="p-2 mb-2 rounded bg-purple-100 border-l-4 border-purple-500">
+                          <p className="text-sm font-medium text-purple-800">Mathematics 101</p>
+                          <p className="text-xs text-purple-600">10:00 - 11:30 AM</p>
+                        </div>
+                      )}
+                      {index === 1 && (
+                        <>
+                          <div className="p-2 mb-2 rounded bg-blue-100 border-l-4 border-blue-500">
+                            <p className="text-sm font-medium text-blue-800">Computer Science</p>
+                            <p className="text-xs text-blue-600">09:00 - 10:30 AM</p>
+                          </div>
+                          <div className="p-2 mb-2 rounded bg-green-100 border-l-4 border-green-500">
+                            <p className="text-sm font-medium text-green-800">Biology Lab</p>
+                            <p className="text-xs text-green-600">02:00 - 03:30 PM</p>
+                          </div>
+                        </>
+                      )}
+                      {index === 3 && (
+                        <div className="p-2 mb-2 rounded bg-orange-100 border-l-4 border-orange-500">
+                          <p className="text-sm font-medium text-orange-800">History</p>
+                          <p className="text-xs text-orange-600">01:00 - 02:30 PM</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="mt-4 flex gap-2">
-                      <button className="bg-[var(--primary-color)] text-white px-3 py-1 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 transform hover:scale-105">Enter</button>
-                      <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 transform hover:scale-105">Materials</button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* CODEX: Classroom cards with visual indicators */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {classrooms.length > 0 ? classrooms.map((room, idx) => (
+                  <div key={room.id} className="card-neumorphic p-0 overflow-hidden hover-scale">
+                    <div className="h-24 bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] relative">
+                      <div className="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 className="font-bold text-xl text-white mb-1">{room.name}</h3>
+                        <p className="text-white text-opacity-90">Prof. {room.teacher || 'Johnson'}</p>
+                      </div>
+                      <div className="absolute top-4 right-4 bg-white bg-opacity-90 text-xs font-medium px-2.5 py-1 rounded-full">
+                        {room.status || (idx % 3 === 0 ? 'Active' : idx % 3 === 1 ? 'Upcoming' : 'Completed')}
+                      </div>
+                    </div>
+                    
+                    <div className="p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center text-[var(--text-color)]">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                          <span>{room.students || '24'} Students</span>
+                        </div>
+                        <div className="text-[var(--text-color)] text-opacity-70 text-sm">
+                          <span>Next class: {room.nextClass || 'Tomorrow, 10:00 AM'}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Progress indicator */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-[var(--text-color)]">Course progress</span>
+                          <span className="text-[var(--primary-color)]">{room.progress || (idx % 3 === 0 ? '45%' : idx % 3 === 1 ? '12%' : '78%')}</span>
+                        </div>
+                        <div className="progress-container h-2">
+                          <div className="progress-bar" style={{ width: room.progress || (idx % 3 === 0 ? '45%' : idx % 3 === 1 ? '12%' : '78%') }}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Assignment status */}
+                      <div className="flex gap-2 mb-4">
+                        <div className="badge badge-beginner">
+                          <span className="mr-1">●</span> {room.assignments?.pending || (idx % 3 + 1)} Pending
+                        </div>
+                        <div className="badge badge-intermediate">
+                          <span className="mr-1">●</span> {room.assignments?.completed || (idx % 2 + 2)} Completed
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                          Enter
+                        </button>
+                        <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          Materials
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )) : 
                 <>
-                  <div className="bg-[var(--bg-color)] p-6 rounded-lg shadow-md border border-[var(--border-color)] transition-colors duration-300 hover:shadow-lg transition-shadow duration-200">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-xl text-[var(--text-color)] mb-2">Mathematics 101</h3>
-                        <p className="text-[var(--text-color)] opacity-80 mb-1">Prof. Johnson</p>
+                  {/* Mathematics classroom */}
+                  <div className="card-neumorphic p-0 overflow-hidden hover-scale">
+                    <div className="h-24 bg-gradient-to-r from-purple-500 to-indigo-600 relative">
+                      <div className="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 className="font-bold text-xl text-white mb-1">Mathematics 101</h3>
+                        <p className="text-white text-opacity-90">Prof. Johnson</p>
                       </div>
-                      <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span>
+                      <div className="absolute top-4 right-4 bg-white bg-opacity-90 text-xs font-medium px-2.5 py-1 rounded-full">
+                        Active
+                      </div>
                     </div>
-                    <div className="flex items-center text-[var(--text-color)] opacity-80 mb-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                      </svg>
-                      <span>24 Students</span>
-                    </div>
-                    <div className="mt-4 flex gap-2">
-                      <button className="bg-[var(--primary-color)] text-white px-3 py-1 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 transform hover:scale-105">Enter</button>
-                      <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 transform hover:scale-105">Materials</button>
+                    
+                    <div className="p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center text-[var(--text-color)]">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                          <span>24 Students</span>
+                        </div>
+                        <div className="text-[var(--text-color)] text-opacity-70 text-sm">
+                          <span>Next class: Tomorrow, 10:00 AM</span>
+                        </div>
+                      </div>
+                      
+                      {/* Progress indicator */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-[var(--text-color)]">Course progress</span>
+                          <span className="text-[var(--primary-color)]">45%</span>
+                        </div>
+                        <div className="progress-container h-2">
+                          <div className="progress-bar" style={{ width: '45%' }}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Assignment status */}
+                      <div className="flex gap-2 mb-4">
+                        <div className="badge badge-beginner">
+                          <span className="mr-1">●</span> 2 Pending
+                        </div>
+                        <div className="badge badge-intermediate">
+                          <span className="mr-1">●</span> 3 Completed
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                          Enter
+                        </button>
+                        <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          Materials
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-[var(--bg-color)] p-6 rounded-lg shadow-md border border-[var(--border-color)] transition-colors duration-300 hover:shadow-lg transition-shadow duration-200">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-xl text-[var(--text-color)] mb-2">History of Science</h3>
-                        <p className="text-[var(--text-color)] opacity-80 mb-1">Prof. Martinez</p>
+                  
+                  {/* Computer Science classroom */}
+                  <div className="card-neumorphic p-0 overflow-hidden hover-scale">
+                    <div className="h-24 bg-gradient-to-r from-blue-500 to-cyan-600 relative">
+                      <div className="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 className="font-bold text-xl text-white mb-1">Computer Science</h3>
+                        <p className="text-white text-opacity-90">Prof. Williams</p>
                       </div>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">New</span>
+                      <div className="absolute top-4 right-4 bg-white bg-opacity-90 text-xs font-medium px-2.5 py-1 rounded-full">
+                        Upcoming
+                      </div>
                     </div>
-                    <div className="flex items-center text-[var(--text-color)] opacity-80 mb-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                      </svg>
-                      <span>18 Students</span>
-                    </div>
-                    <div className="mt-4 flex gap-2">
-                      <button className="bg-[var(--primary-color)] text-white px-3 py-1 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 transform hover:scale-105">Enter</button>
-                      <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 transform hover:scale-105">Materials</button>
+                    
+                    <div className="p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center text-[var(--text-color)]">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                          <span>18 Students</span>
+                        </div>
+                        <div className="text-[var(--text-color)] text-opacity-70 text-sm">
+                          <span>Next class: Today, 2:00 PM</span>
+                        </div>
+                      </div>
+                      
+                      {/* Progress indicator */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-[var(--text-color)]">Course progress</span>
+                          <span className="text-[var(--primary-color)]">12%</span>
+                        </div>
+                        <div className="progress-container h-2">
+                          <div className="progress-bar" style={{ width: '12%' }}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Assignment status */}
+                      <div className="flex gap-2 mb-4">
+                        <div className="badge badge-beginner">
+                          <span className="mr-1">●</span> 1 Pending
+                        </div>
+                        <div className="badge badge-intermediate">
+                          <span className="mr-1">●</span> 2 Completed
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                          Enter
+                        </button>
+                        <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          Materials
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </>
-                }
+                )}
               </div>
             </section>
           )}
-          
           {activeTab === 'grades' && (
             <section className="mb-6">
               <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('grades')}</h2>
