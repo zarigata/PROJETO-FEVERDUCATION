@@ -25,14 +25,26 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
     setInput('');
     scrollToBottom();
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(
         `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/ai/${endpoint}`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: userMsg, model: AI_MODELS.default, stream: true }),
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ prompt: userMsg })
         }
       );
+      // CODEX: Abort streaming on HTTP error statuses
+      if (!res.ok) {
+        const errorResp = await res.json();
+        const text = errorResp.detail || t('ai_error');
+        setMessages(prev => [...prev, { sender: 'assistant', text }]);
+        scrollToBottom();
+        return;
+      }
       if (!res.body) throw new Error('No response body');
       const reader = res.body.getReader();
       const decoder = new TextDecoder();

@@ -5,7 +5,10 @@ WORKDIR /app
 
 # Install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt python-multipart
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc libffi-dev libssl-dev python3-dev \
+    && pip install --no-cache-dir -r requirements.txt python-multipart \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy application code
 COPY . .
