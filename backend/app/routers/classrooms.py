@@ -4,14 +4,17 @@ from typing import List
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Classroom, UserRole
-from app.schemas import ClassroomCreate, ClassroomRead
+from app.schemas import ClassroomCreate, ClassroomRead, JoinModel
 from app.routers.auth import get_current_active_user, require_role
+import uuid
 
 router = APIRouter(prefix="/classrooms", tags=["classrooms"])
 
 @router.post("/", response_model=ClassroomRead)
 def create_classroom(classroom_in: ClassroomCreate, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db)):
-    classroom = Classroom(name=classroom_in.name, teacher_id=current_teacher.id)
+    # Generate a unique join code for the classroom
+    join_code = uuid.uuid4().hex[:8]
+    classroom = Classroom(name=classroom_in.name, join_code=join_code, teacher_id=current_teacher.id)
     db.add(classroom)
     db.commit()
     db.refresh(classroom)
@@ -51,3 +54,16 @@ def delete_classroom(classroom_id: int, current_teacher=Depends(require_role(Use
         raise HTTPException(status_code=404 if not classroom else 403, detail="Not allowed")
     db.delete(classroom)
     db.commit()
+
+@router.post("/join", response_model=ClassroomRead)
+def join_classroom(join_in: JoinModel, current_student=Depends(require_role(UserRole.student)), db: Session = Depends(get_db)):
+    # Allow a student to join via join_code
+    classroom = db.query(Classroom).filter(Classroom.join_code == join_in.join_code).first()
+    if not classroom:
+        raise HTTPException(status_code=404, detail="Classroom not found")
+    if current_student in classroom.students:
+        return classroom
+    classroom.students.append(current_student)
+    db.commit()
+    db.refresh(classroom)
+    return classroom

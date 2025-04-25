@@ -2,20 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useTranslation } from 'react-i18next';
+import { AxiosError } from 'axios';
 
 const Login: React.FC = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // CODEX: Clear previous error message before attempting login
+    setErrorMessage('');
     e.preventDefault();
     try {
       const params = new URLSearchParams();
       params.append('username', email);
       params.append('password', password);
-      const res = await api.post('/auth/login', params);
+      // CODEX: Send form data with correct Content-Type for FastAPI OAuth2
+      const res = await api.post('/auth/login', params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
       const { access_token } = res.data;
       localStorage.setItem('token', access_token);
       // determine user role
@@ -23,8 +28,19 @@ const Login: React.FC = () => {
       const role = me.data.role;
       const path = role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/student';
       navigate(path);
-    } catch {
-      alert(t('login_error'));
+    } catch (e: any) {
+      // CODEX: Determine error message based on HTTP status
+      const status = (e as AxiosError)?.response?.status;
+      let msg = t('login_error'); // generic fallback
+      if (status === 422) {
+        msg = t('login_error_required');
+      } else if (status === 401) {
+        msg = t('login_error_credentials');
+      } else if (status && status >= 500) {
+        msg = t('login_error_server');
+      }
+      // CODEX: Update error state to display message in UI
+      setErrorMessage(msg);
     }
   };
 
@@ -116,6 +132,10 @@ const Login: React.FC = () => {
             >
               {t('login')}
             </button>
+            {/* CODEX: Display login error message inline */}
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2 text-center">{errorMessage}</p>
+            )}
           </form>
           
           <div className="text-center pt-4 border-t border-[var(--border-color)] mt-6">
@@ -128,7 +148,7 @@ const Login: React.FC = () => {
           </div>
           
           <div className="text-center text-xs text-[var(--text-color)] opacity-50 transition-colors duration-300 mt-8">
-            <p>FeverDucation © {new Date().getFullYear()}</p>
+            <p>FeverDucation {new Date().getFullYear()}</p>
           </div>
         </div>
       </div>

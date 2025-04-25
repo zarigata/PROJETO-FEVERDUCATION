@@ -1,0 +1,15 @@
+# Exclude dependencies and build artifacts
+node_modules/
+build/
+
+# Docker config
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Git files
+.git/
+.gitignore
+
+# Logs
+npm-debug.log

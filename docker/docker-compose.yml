@@ -31,8 +31,6 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_ENABLE_REGISTER: "true"
-    volumes:
-      - ../frontend:/app
     ports:
       - "3000:80"
     depends_on:

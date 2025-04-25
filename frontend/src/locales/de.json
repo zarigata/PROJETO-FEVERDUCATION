@@ -4,9 +4,6 @@
   "email": "Email",
   "password": "Password",
   "login_error": "Login failed, please try again.",
-  "login_error_required": "Please enter both email and password.",
-  "login_error_credentials": "Incorrect email or password.",
-  "login_error_server": "Server error. Please try again later.",
   "student_dashboard": "Student Dashboard",
   "teacher_dashboard": "Teacher Dashboard",
   "admin_dashboard": "Admin Dashboard",
@@ -41,7 +38,7 @@
   "dont_have_account": "Don't have an account?",
   "register": "Register",
   "back_to_home": "Back to Home",
-  
+
   "settings": "Settings",
   "theme_settings": "Theme Settings",
   "language_settings": "Language Settings",
@@ -49,7 +46,7 @@
   "terms": "Terms",
   "privacy": "Privacy",
   "help": "Help",
-  
+
   "dashboard_welcome": "Welcome to your dashboard",
   "recent_activity": "Recent Activity",
   "upcoming_events": "Upcoming Events",
@@ -66,6 +63,6 @@
   "generate_lesson_placeholder": "Describe the lesson you want to generate...",
   "register_success": "Registration successful! Please log in.",
   "register_error": "Registration failed. Please try again.",
-  "ai_integration": "AI Chat",
-  "ai_error": "Sorry, I had trouble processing your request. Please try again."
+  "ai_integration": "KI-Chat",
+  "ai_error": "Entschuldigung, bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
 }

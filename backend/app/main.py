@@ -14,6 +14,9 @@ from app.routers.grades import router as grades_router
 from app.routers.analytics import router as analytics_router
 from app.routers.audit_logs import router as audit_logs_router
 from app.routers.ai import router as ai_router
+from app.routers.lessons import router as lessons_router
+from app.routers.advisor import router as advisor_router
+from app.routers.preferences import router as preferences_router
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -58,6 +61,9 @@ app.include_router(grades_router, prefix="/api")
 app.include_router(analytics_router, prefix="/api")
 app.include_router(audit_logs_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
+app.include_router(lessons_router, prefix="/api")
+app.include_router(advisor_router, prefix="/api")
+app.include_router(preferences_router, prefix="/api/user")  # preferences router
 
 # Root endpoint
 @app.get("/")

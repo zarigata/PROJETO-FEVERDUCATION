@@ -9,6 +9,7 @@ import api from '../api';
 import DashboardLayout from './DashboardLayout';
 import TabNav from './TabNav';
 import CSSSettings from './CSSSettings';
+import AIChat from './AIChat';
 
 const TeacherDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const TeacherDashboard: React.FC = () => {
   const [classrooms, setClassrooms] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [newName, setNewName] = useState('');
+  const [newJoinCode, setNewJoinCode] = useState<string>('');
   const [lessonPrompt, setLessonPrompt] = useState<string>('');
   const [lesson, setLesson] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -74,6 +76,8 @@ const TeacherDashboard: React.FC = () => {
     const res = await api.post('/classrooms', { name: newName });
     setClassrooms(prev => [...prev, res.data]);
     setNewName('');
+    // Store join code for new classroom
+    setNewJoinCode(res.data.join_code);
   };
 
   /**
@@ -321,7 +325,7 @@ const TeacherDashboard: React.FC = () => {
                 <button className="card-neumorphic p-4 text-center hover-scale flex flex-col items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </div>
                   <span className="text-sm font-medium text-[var(--text-color)]">View Reports</span>
@@ -357,6 +361,17 @@ const TeacherDashboard: React.FC = () => {
                   </button>
                 </div>
               </div>
+              {newJoinCode && (
+                <div className="mt-2 text-sm text-[var(--text-color)] flex items-center gap-2">
+                  <span>Join Code: {newJoinCode}</span>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(newJoinCode)}
+                    className="text-[var(--primary-color)] hover:underline"
+                  >
+                    Copy
+                  </button>
+                </div>
+              )}
               
               {/* CODEX: Classroom management tools */}
               <div className="flex justify-between items-center mb-4">
@@ -732,351 +747,7 @@ const TeacherDashboard: React.FC = () => {
           {activeTab === 'ai_integration' && (
             <section className="mb-6">
               <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('ai_integration')}</h2>
-              
-              {/* CODEX: AI Class Generator - Main interface */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2">
-                  <div className="card-neumorphic p-6">
-                    <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">AI Class Generator</h3>
-                    <p className="text-[var(--text-color)] mb-6">Create complete class structures with lessons, assignments, quizzes, and resources using AI. The system will generate a comprehensive curriculum based on your specifications.</p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div>
-                        <label className="block text-[var(--text-color)] mb-2 font-medium">Subject Area</label>
-                        <select className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200">
-                          <option value="">Select a subject</option>
-                          <option value="computer_science">Computer Science</option>
-                          <option value="mathematics">Mathematics</option>
-                          <option value="science">Science</option>
-                          <option value="language_arts">Language Arts</option>
-                          <option value="social_studies">Social Studies</option>
-                          <option value="arts">Arts</option>
-                          <option value="physical_education">Physical Education</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-[var(--text-color)] mb-2 font-medium">Grade Level</label>
-                        <select className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200">
-                          <option value="">Select grade level</option>
-                          <option value="elementary">Elementary (K-5)</option>
-                          <option value="middle">Middle School (6-8)</option>
-                          <option value="high">High School (9-12)</option>
-                          <option value="college">College/University</option>
-                          <option value="adult">Adult Education</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Class Title</label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter a title for your class" 
-                        className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200" 
-                      />
-                    </div>
-                    
-                    <div className="mb-6">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Class Description & Learning Objectives</label>
-                      <textarea 
-                        placeholder="Describe the class and its learning objectives. Be specific about what students should learn and accomplish." 
-                        className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200 min-h-32" 
-                      ></textarea>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div>
-                        <label className="block text-[var(--text-color)] mb-2 font-medium">Duration</label>
-                        <div className="flex items-center gap-4">
-                          <input 
-                            type="number" 
-                            min="1" 
-                            defaultValue="12" 
-                            className="w-20 p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200" 
-                          />
-                          <select className="flex-1 p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200">
-                            <option value="weeks">Weeks</option>
-                            <option value="days">Days</option>
-                            <option value="months">Months</option>
-                            <option value="sessions">Sessions</option>
-                          </select>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-[var(--text-color)] mb-2 font-medium">Number of Lessons</label>
-                        <input 
-                          type="number" 
-                          min="1" 
-                          max="50" 
-                          defaultValue="10" 
-                          className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200" 
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Class Components</label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {[
-                          'Lectures', 'Assignments', 'Quizzes', 'Projects', 
-                          'Discussions', 'Labs', 'Readings', 'Videos',
-                          'Group Activities', 'Assessments', 'Field Trips', 'Guest Speakers'
-                        ].map(component => (
-                          <label key={component} className="flex items-center p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                            <input type="checkbox" className="mr-2" defaultChecked={['Lectures', 'Assignments', 'Quizzes', 'Projects'].includes(component)} />
-                            <span className="text-[var(--text-color)]">{component}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end">
-                      <button className="bg-[var(--primary-color)] text-white px-6 py-3 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        Generate Complete Class
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="card-neumorphic p-6 mb-6">
-                    <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">AI Configuration</h3>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">AI Model</label>
-                      <select 
-                        value={aiModel}
-                        onChange={(e) => setAiModel(e.target.value)}
-                        className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200"
-                      >
-                        <option value="llama3.2">Llama 3.2 (Default)</option>
-                        <option value="llama3.1">Llama 3.1</option>
-                        <option value="mistral">Mistral 7B</option>
-                        <option value="mixtral">Mixtral 8x7B</option>
-                      </select>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Creativity Level</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="1" 
-                        step="0.1" 
-                        value={temperature}
-                        onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                        className="w-full h-2 bg-[var(--bg-color-hover)] rounded-lg appearance-none cursor-pointer" 
-                      />
-                      <div className="flex justify-between text-xs text-[var(--text-color)] mt-1">
-                        <span>Standard</span>
-                        <span>Creative</span>
-                        <span>Innovative</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Focus Areas</label>
-                      <div className="space-y-2">
-                        {[
-                          'Critical Thinking', 'Problem Solving', 'Creativity', 
-                          'Collaboration', 'Communication', 'Technical Skills'
-                        ].map(focus => (
-                          <label key={focus} className="flex items-center text-[var(--text-color)]">
-                            <input type="checkbox" className="mr-2" defaultChecked={['Critical Thinking', 'Problem Solving'].includes(focus)} />
-                            {focus}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Teaching Style</label>
-                      <div className="space-y-2">
-                        {['Lecture-based', 'Interactive', 'Project-based', 'Flipped Classroom'].map(style => (
-                          <div key={style} className="flex items-center">
-                            <input 
-                              type="radio" 
-                              id={`style-${style}`} 
-                              name="teachingStyle" 
-                              className="mr-2"
-                              defaultChecked={style === 'Interactive'}
-                            />
-                            <label htmlFor={`style-${style}`} className="text-[var(--text-color)]">{style}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="card-neumorphic p-6">
-                    <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">Recent Templates</h3>
-                    <div className="space-y-3">
-                      {[
-                        'Introduction to Programming', 
-                        'World History Survey', 
-                        'Biology 101',
-                        'Creative Writing Workshop'
-                      ].map(template => (
-                        <div key={template} className="p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer flex justify-between items-center">
-                          <span className="text-[var(--text-color)]">{template}</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[var(--text-color)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* CODEX: AI Integration Features */}
-              <div className="card-neumorphic p-6">
-                <h3 className="text-xl font-medium text-[var(--text-color)] mb-6">Other AI Features</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Assignment Generator</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Create customized assignments with varying difficulty levels based on lesson content.</p>
-                  </div>
-                  
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Quiz Builder</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Generate quizzes with multiple question types based on your lesson content.</p>
-                  </div>
-                  
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Discussion Prompts</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Create engaging discussion topics that encourage critical thinking and collaboration.</p>
-                  </div>
-                  
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Resource Finder</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Discover relevant educational resources, readings, and materials for your lessons.</p>
-                  </div>
-                  
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Video Script Generator</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Create scripts for educational videos based on your lesson content.</p>
-                  </div>
-                  
-                  <div className="p-4 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-color-hover)] transition-all duration-200 cursor-pointer">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-[var(--text-color)]">Progress Analyzer</h4>
-                    </div>
-                    <p className="text-[var(--text-color)] text-sm">Analyze student performance and provide personalized recommendations.</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* CODEX: API Configuration */}
-              <div className="card-neumorphic p-6 mt-6">
-                <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">Ollama API Configuration</h3>
-                <p className="text-[var(--text-color)] mb-6">Configure your Ollama API settings for optimal performance with FeverDucation.</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">API Endpoint</label>
-                      <input 
-                        type="text" 
-                        defaultValue="http://localhost:11434/api/generate" 
-                        className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200" 
-                      />
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Default Model</label>
-                      <select className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200">
-                        <option value="llama3.2">Llama 3.2</option>
-                        <option value="llama3.1">Llama 3.1</option>
-                        <option value="mistral">Mistral 7B</option>
-                        <option value="mixtral">Mixtral 8x7B</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Advanced Settings</label>
-                      <div className="space-y-2">
-                        <label className="flex items-center text-[var(--text-color)]">
-                          <input type="checkbox" className="mr-2" defaultChecked />
-                          Stream responses
-                        </label>
-                        <label className="flex items-center text-[var(--text-color)]">
-                          <input type="checkbox" className="mr-2" defaultChecked />
-                          Cache responses
-                        </label>
-                        <label className="flex items-center text-[var(--text-color)]">
-                          <input type="checkbox" className="mr-2" />
-                          Debug mode
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-[var(--text-color)] mb-2 font-medium">Pre-prompt Style</label>
-                      <select className="w-full p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200">
-                        <option value="standard">Standard</option>
-                        <option value="detailed">Detailed</option>
-                        <option value="minimal">Minimal</option>
-                        <option value="custom">Custom</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end mt-4">
-                  <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 font-medium">
-                    Save Configuration
-                  </button>
-                </div>
-              </div>
+              <AIChat endpoint="analytics" title={t('ai_integration')} placeholder={t('ai_assistant_placeholder')} poweredBy="FeVe" />
             </section>
           )}
           {activeTab === 'settings' && (

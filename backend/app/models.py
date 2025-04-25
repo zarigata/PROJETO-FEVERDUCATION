@@ -27,6 +27,9 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.student, nullable=False)
     timezone = Column(String, default="UTC")
     created_at = Column(DateTime, default=datetime.utcnow)
+    # CODEX: User preferences
+    theme = Column(String, default='/styles/presets/light.css', nullable=False)
+    language = Column(String, default='en', nullable=False)
     # CODEX: profile fields
     name = Column(String, nullable=True)
     birthday = Column(Date, nullable=True)
@@ -42,6 +45,8 @@ class User(Base):
 class Classroom(Base):
     __tablename__ = "classrooms"
     id = Column(Integer, primary_key=True, index=True)
+    # CODEX: Unique join code for classroom enrollment
+    join_code = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, index=True, nullable=False)
     teacher_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -50,18 +55,24 @@ class Classroom(Base):
     teacher = relationship("User", back_populates="taught_classrooms")
     students = relationship("User", secondary=classroom_students, back_populates="classrooms")
     assignments = relationship("Assignment", back_populates="classroom")
+    # CODEX: Back-reference for scheduled lessons
+    lessons = relationship("Lesson", back_populates="classroom")
+    # CODEX: Subjects under classroom
+    subjects = relationship("Subject", back_populates="classroom")
 
 # CODEX: Assignment model for classroom tasks
 class Assignment(Base):
     __tablename__ = "assignments"
     id = Column(Integer, primary_key=True, index=True)
     classroom_id = Column(Integer, ForeignKey("classrooms.id"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=True)
     title = Column(String, nullable=False)
     description = Column(String)
     due_date = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     classroom = relationship("Classroom", back_populates="assignments")
+    subject = relationship("Subject", back_populates="assignments")
     grades = relationship("Grade", back_populates="assignment")
 
 # CODEX: Grade model linking students to assignment results
@@ -94,3 +105,26 @@ class AuditLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="audit_logs")
+
+# CODEX: Lesson model for scheduled classroom content
+class Lesson(Base):
+    __tablename__ = "lessons"
+    id = Column(Integer, primary_key=True, index=True)
+    classroom_id = Column(Integer, ForeignKey("classrooms.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    scheduled_date = Column(Date, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    classroom = relationship("Classroom", back_populates="lessons")
+
+# CODEX: Subject model for course modules
+class Subject(Base):
+    __tablename__ = "subjects"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    classroom_id = Column(Integer, ForeignKey("classrooms.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    classroom = relationship("Classroom", back_populates="subjects")
+    assignments = relationship("Assignment", back_populates="subject")

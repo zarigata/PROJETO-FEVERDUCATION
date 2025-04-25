@@ -34,6 +34,7 @@ class UserUpdate(BaseModel):
 # Classroom schemas
 class ClassroomBase(BaseModel):
     name: str
+    join_code: str
 
 class ClassroomCreate(ClassroomBase):
     pass
@@ -46,6 +47,36 @@ class ClassroomRead(ClassroomBase):
     class Config:
         orm_mode = True
 
+# Subject schemas
+class SubjectBase(BaseModel):
+    name: str
+    classroom_id: int
+
+class SubjectCreate(SubjectBase):
+    pass
+
+class SubjectRead(SubjectBase):
+    id: int
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+# Lesson schemas
+class LessonBase(BaseModel):
+    classroom_id: int
+    title: str
+    description: Optional[str] = None
+    scheduled_date: date
+
+class LessonCreate(LessonBase):
+    pass
+
+class LessonRead(LessonBase):
+    id: int
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
 # Assignment schemas
 class AssignmentBase(BaseModel):
     title: str
@@ -54,10 +85,12 @@ class AssignmentBase(BaseModel):
 
 class AssignmentCreate(AssignmentBase):
     classroom_id: int
+    subject_id: Optional[int]
 
 class AssignmentRead(AssignmentBase):
     id: int
     classroom_id: int
+    subject_id: Optional[int]
     created_at: datetime
     class Config:
         orm_mode = True
@@ -78,6 +111,16 @@ class GradeRead(GradeBase):
     class Config:
         orm_mode = True
 
+# Classroom join model
+class JoinModel(BaseModel):
+    join_code: str
+
+# Advisor response schema
+class AdvisorResponse(BaseModel):
+    upcoming_lessons: List[LessonRead]
+    pending_assignments: List[AssignmentRead]
+    low_grades: List[GradeRead]
+
 # Analytics schema
 class AnalyticsRead(BaseModel):
     id: int
@@ -96,3 +139,16 @@ class AuditLogRead(BaseModel):
     timestamp: datetime
     class Config:
         orm_mode = True
+
+# Preferences schemas
+class PreferencesBase(BaseModel):
+    theme: str
+    language: str
+
+class PreferencesRead(PreferencesBase):
+    class Config:
+        orm_mode = True
+
+class PreferencesUpdate(BaseModel):
+    theme: Optional[str] = None
+    language: Optional[str] = None

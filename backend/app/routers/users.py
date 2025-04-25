@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
 from app.models import User, UserRole
-from app.schemas import UserCreate, UserRead, UserUpdate
+from app.schemas import UserCreate, UserRead, UserUpdate, JoinModel as ClassroomJoinModel  # for join classroom functionality
 from app.security import get_password_hash
 from app.routers.auth import get_current_active_user, require_role
 
