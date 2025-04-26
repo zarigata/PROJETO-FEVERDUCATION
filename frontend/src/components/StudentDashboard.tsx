@@ -107,8 +107,9 @@ const StudentDashboard: React.FC = () => {
                   </div>
                   
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-[var(--text-color)] mb-2">{t('student_name')}</h3>
-                    <p className="text-[var(--text-color)] opacity-80 mb-4">{t('student_description')}</p>
+                    <h3 className="text-xl font-bold text-[var(--text-color)] mb-1">{user?.name}</h3>
+                    <p className="text-sm text-[var(--text-color)] opacity-70 mb-1">{`${t('email')}: ${user?.email}`}</p>
+                    <p className="text-sm text-[var(--text-color)] opacity-70 mb-4">{`${t('birthday')}: ${user?.birthday ? new Date(user.birthday).toLocaleDateString() : ''}`}</p>
                     
                     <div className="mb-4">
                       <div className="flex justify-between mb-1">
