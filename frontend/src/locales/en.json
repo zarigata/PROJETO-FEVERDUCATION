@@ -70,6 +70,8 @@
   "ai_error": "Sorry, I had trouble processing your request. Please try again.",
   "new_chat": "New Chat",
   "chat_session_prompt": "Please create or select a chat session first.",
+  "no_sessions": "No chat sessions available.",
+  "delete_chat": "Delete Chat",
   "student_name": "Student Name",
   "student_description": "Your learning journey at a glance.",
   "experience": "Experience",
