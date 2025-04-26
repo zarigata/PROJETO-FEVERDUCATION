@@ -8,18 +8,21 @@ interface AIChatProps {
   title: string;
   placeholder: string;
   poweredBy?: string;
+  sessionId?: number;
 }
 
-const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy }) => {
+const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy, sessionId }) => {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => endRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   const sendMessage = async () => {
     if (!input.trim()) return;
+    setIsLoading(true);
     const userMsg = input.trim();
     setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
     setInput('');
@@ -34,7 +37,7 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
           },
-          body: JSON.stringify({ prompt: userMsg })
+          body: JSON.stringify({ prompt: userMsg, session_id: sessionId })
         }
       );
       // CODEX: Abort streaming on HTTP error statuses
@@ -63,6 +66,8 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
       console.error('AIChat error', err);
       setMessages(prev => [...prev, { sender: 'assistant', text: t('ai_error') }]);
       scrollToBottom();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,6 +75,11 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
     <div className="flex flex-col h-full">
       <h3 className="text-xl font-semibold mb-4 transition-colors duration-300">{title}</h3>
       <div className="flex-1 overflow-y-auto p-4 bg-[var(--bg-color)] rounded-lg space-y-3 transition-colors duration-300">
+        {isLoading && (
+          <div className="mb-2 flex justify-start">
+            <div className="w-6 h-6 bg-[var(--primary-color)] rounded animate-shake"></div>
+          </div>
+        )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`px-4 py-2 rounded-lg max-w-3/4 ${m.sender === 'user' ? 'bg-[var(--primary-color)] text-white' : 'bg-[var(--bg-color-hover)] text-[var(--text-color)]'}`}>{m.text}</div>

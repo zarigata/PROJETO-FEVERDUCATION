@@ -152,3 +152,21 @@ class PreferencesRead(PreferencesBase):
 class PreferencesUpdate(BaseModel):
     theme: Optional[str] = None
     language: Optional[str] = None
+
+# Chat history schemas
+class ChatMessageRead(BaseModel):
+    id: int
+    session_id: int
+    sender: str
+    text: str
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class ChatSessionRead(BaseModel):
+    id: int
+    user_id: int
+    created_at: datetime
+    messages: list[ChatMessageRead] = []
+    class Config:
+        orm_mode = True

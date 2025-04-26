@@ -106,6 +106,23 @@ class AuditLog(Base):
 
     user = relationship("User", back_populates="audit_logs")
 
+# CODEX: Chat sessions and messages for AI chat history
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
+    sender = Column(String, nullable=False)
+    text = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    session = relationship("ChatSession", back_populates="messages")
+
 # CODEX: Lesson model for scheduled classroom content
 class Lesson(Base):
     __tablename__ = "lessons"

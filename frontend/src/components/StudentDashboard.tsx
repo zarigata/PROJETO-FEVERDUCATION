@@ -4,6 +4,7 @@ import api from '../api';
 import DashboardLayout from './DashboardLayout';
 import TabNav from './TabNav';
 import AIChat from './AIChat'; // Import AIChat component
+import ChatSidebar from './ChatSidebar';
 
 const StudentDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const StudentDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [profileForm, setProfileForm] = useState<{ name: string; birthday: string; profile_photo: string }>({ name: '', birthday: '', profile_photo: '' });
   const [joinCode, setJoinCode] = useState<string>('');
+  const [sessionId, setSessionId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -528,9 +530,12 @@ const StudentDashboard: React.FC = () => {
           )}
           
           {activeTab === 'ai_tutor' && (
-            <section className="mb-6">
-              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('ai_tutor')}</h2>
-              <AIChat endpoint="tutor" title={t('ai_tutor')} placeholder={t('ai_assistant_placeholder')} poweredBy="FeVe" />
+            <section className="mb-6 flex space-x-4 h-[600px]">
+              <ChatSidebar sessionId={sessionId} setSessionId={setSessionId} />
+              <div className="flex-1 flex flex-col">
+                <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('ai_tutor')}</h2>
+                <AIChat endpoint="tutor" sessionId={sessionId ?? undefined} title={t('ai_tutor')} placeholder={t('ai_assistant_placeholder')} poweredBy="FeVe" />
+              </div>
             </section>
           )}
           {activeTab === 'profile' && (
