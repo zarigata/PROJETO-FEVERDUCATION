@@ -37,6 +37,10 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
   const scrollToBottom = () => endRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   const sendMessage = async () => {
+    if (sessionId == null) {
+      alert(t('Please create or select a chat session first.'));
+      return;
+    }
     if (!input.trim()) return;
     setIsLoading(true);
     const userMsg = input.trim();
@@ -107,12 +111,13 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
         <input
           type="text"
           className="flex-1 p-3 bg-[var(--bg-color-hover)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200"
-          placeholder={placeholder}
+          placeholder={sessionId == null ? t('Please create or select a chat session first.') : placeholder}
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && sendMessage()}
+          disabled={sessionId == null}
         />
-        <button onClick={sendMessage} className="bg-[var(--primary-color)] text-white p-3 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200">
+        <button onClick={sendMessage} className="bg-[var(--primary-color)] text-white p-3 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200" disabled={sessionId == null}>
           {t('generate')}
         </button>
       </div>
