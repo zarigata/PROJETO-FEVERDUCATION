@@ -67,9 +67,15 @@ const StudentDashboard: React.FC = () => {
     e.preventDefault();
     if (!user) return;
     try {
-      const res = await api.put(`/users/${user.id}`, profileForm);
+      // include email to ensure body isn't empty, triggers commit
+      const updateData: Record<string, any> = { email: user.email };
+      if (profileForm.name) updateData.name = profileForm.name;
+      if (profileForm.birthday) updateData.birthday = profileForm.birthday;
+      if (profileForm.profile_photo) updateData.profile_photo = profileForm.profile_photo;
+      const res = await api.put(`/users/${user.id}`, updateData);
       setUser(res.data);
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Profile save validation error:', err.response?.data);
       console.error('Error saving profile:', err);
     }
   };

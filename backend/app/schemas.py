@@ -23,13 +23,13 @@ class UserRead(UserBase):
         orm_mode = True
 
 class UserUpdate(BaseModel):
-    email: Optional[str]
-    password: Optional[str]
-    role: Optional[UserRole]
-    timezone: Optional[str]
-    name: Optional[str]
-    birthday: Optional[date]
-    profile_photo: Optional[str]
+    email: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[UserRole] = None
+    timezone: Optional[str] = None
+    name: Optional[str] = None
+    birthday: Optional[date] = None
+    profile_photo: Optional[str] = None
 
 # Classroom schemas
 class ClassroomBase(BaseModel):
