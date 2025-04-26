@@ -111,7 +111,7 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
         <input
           type="text"
           className="flex-1 p-3 bg-[var(--bg-color-hover)] border border-[var(--border-color)] rounded-lg text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200"
-          placeholder={sessionId == null ? t('Please create or select a chat session first.') : placeholder}
+          placeholder={sessionId == null ? (t('Please create or select a chat session first.') as string) : placeholder}
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && sendMessage()}
