@@ -39,3 +39,13 @@ def get_messages(session_id: int, current_user=Depends(require_role(UserRole.stu
     messages = db.query(ChatMessage).filter_by(session_id=session.id)\
         .order_by(ChatMessage.created_at.asc()).limit(128).all()
     return messages
+
+@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_session(session_id: int, current_user=Depends(require_role(UserRole.student)), db: Session = Depends(get_db)):
+    session = db.query(ChatSession).filter_by(id=session_id, user_id=current_user.id).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    db.query(ChatMessage).filter_by(session_id=session.id).delete()
+    db.delete(session)
+    db.commit()
+    return

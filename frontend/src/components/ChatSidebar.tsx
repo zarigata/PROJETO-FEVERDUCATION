@@ -4,7 +4,7 @@ import api from '../api';
 import { useTranslation } from 'react-i18next';
 
 interface ChatSession { id: number; created_at: string; }
-interface ChatSidebarProps { sessionId: number | null; setSessionId: (id: number) => void; }
+interface ChatSidebarProps { sessionId: number | null; setSessionId: (id: number | null) => void; }
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ sessionId, setSessionId }) => {
   const { t } = useTranslation();
@@ -23,11 +23,26 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ sessionId, setSessionId }) =>
 
   const handleNew = async () => {
     try {
+      // if current session exists but has no messages, do not create duplicate empty session
+      if (sessionId != null) {
+        const msgRes = await api.get(`/chat/sessions/${sessionId}/messages`);
+        if (msgRes.data.length === 0) return;
+      }
       const res = await api.post('/chat/sessions');
       setSessionId(res.data.id);
       fetchSessions();
     } catch (err) {
       console.error('Error creating session:', err);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await api.delete(`/chat/sessions/${id}`);
+      if (sessionId === id) setSessionId(null);
+      fetchSessions();
+    } catch (err) {
+      console.error('Error deleting session:', err);
     }
   };
 
@@ -39,9 +54,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ sessionId, setSessionId }) =>
       <div className="flex-1 overflow-y-auto">
         {sessions.map(sess => (
           <div key={sess.id}
-               onClick={() => setSessionId(sess.id)}
-               className={`p-2 mb-2 rounded-lg cursor-pointer ${sessionId === sess.id ? 'bg-[var(--bg-color-hover)]' : 'bg-[var(--bg-color)]'}`}>
-            {new Date(sess.created_at).toLocaleString()}
+               className={`p-2 mb-2 rounded-lg cursor-pointer flex justify-between items-center ${sessionId === sess.id ? 'bg-[var(--bg-color-hover)]' : 'bg-[var(--bg-color)]'}`}
+               onClick={() => setSessionId(sess.id)}>
+            <span>{new Date(sess.created_at).toLocaleString()}</span>
+            <button onClick={e => { e.stopPropagation(); handleDelete(sess.id); }} className="ml-2 text-red-500 hover:text-red-700">×</button>
           </div>
         ))}
       </div>

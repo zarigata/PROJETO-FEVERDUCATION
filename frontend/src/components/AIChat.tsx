@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AI_MODELS } from '../config/aiModels';
+import api from '../api';
 
 interface Message { sender: 'user' | 'assistant'; text: string; }
 interface AIChatProps {
@@ -17,6 +18,21 @@ const AIChat: React.FC<AIChatProps> = ({ endpoint, title, placeholder, poweredBy
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (sessionId == null) { setMessages([]); return; }
+      try {
+        const res = await api.get(`/chat/sessions/${sessionId}/messages`);
+        const msgs = res.data.map((m: any) => ({ sender: m.sender, text: m.text }));
+        setMessages(msgs);
+        scrollToBottom();
+      } catch (err) {
+        console.error('Error loading chat history:', err);
+      }
+    };
+    loadHistory();
+  }, [sessionId]);
 
   const scrollToBottom = () => endRef.current?.scrollIntoView({ behavior: 'smooth' });
 
