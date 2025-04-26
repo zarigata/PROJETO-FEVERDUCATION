@@ -60,7 +60,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ sessionId, setSessionId }) =>
                  className={`p-2 mb-2 rounded-lg cursor-pointer flex justify-between items-center ${sessionId === sess.id ? 'bg-[var(--bg-color-hover)]' : 'bg-[var(--bg-color)]'}`}
                  onClick={() => setSessionId(sess.id)}>
               <span>{new Date(sess.created_at).toLocaleString()}</span>
-              <button type="button" aria-label={t('delete_chat')} onClick={e => { e.stopPropagation(); handleDelete(sess.id); }} className="ml-2 text-red-500 hover:text-red-700">×</button>
+              <button type="button" aria-label={t('delete_chat') as string} onClick={e => { e.stopPropagation(); handleDelete(sess.id); }} className="ml-2 text-red-500 hover:text-red-700">×</button>
             </div>
           ))
         )}
