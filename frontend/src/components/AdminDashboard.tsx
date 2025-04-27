@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import api from '../api';
 import DashboardLayout from './DashboardLayout';
@@ -27,6 +27,31 @@ const AdminDashboard: React.FC = () => {
 
   // Compute users based on email and role filters
   const displayedUsers = users.filter(u => u.email.includes(filterEmail) && (filterRole === 'all' || u.role === filterRole));
+
+  // CODEX: Bulk selection and pagination state
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(displayedUsers.length / pageSize);
+  const paginatedUsers = displayedUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // CODEX: Bulk actions
+  const deleteSelected = async () => {
+    if (window.confirm(t('confirm_bulk_delete') as string)) {
+      for (const id of selectedUsers) await api.delete(`/users/${id}`);
+      setUsers(prev => prev.filter(u => !selectedUsers.includes(u.id)));
+      setSelectedUsers([]);
+    }
+  };
+  const exportCSV = () => {
+    const rows = users.filter(u => selectedUsers.includes(u.id));
+    let csv = 'id,email,role,timezone,language\n';
+    rows.forEach(u => { csv += `${u.id},${u.email},${u.role},${u.timezone||'UTC'},${u.language||'en'}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'users.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,10 +186,27 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </form>
               )}
+              {selectedUsers.length > 0 && (
+                <div className="flex gap-2 mb-4">
+                  <button onClick={deleteSelected} className="bg-red-500 text-white px-4 py-2 rounded">
+                    {t('bulk_delete') as string}
+                  </button>
+                  <button onClick={exportCSV} className="bg-blue-500 text-white px-4 py-2 rounded">
+                    {t('export_csv') as string}
+                  </button>
+                </div>
+              )}
               <div className="overflow-x-auto mt-4">
                 <table className="min-w-full divide-y divide-[var(--border-color)] transition-colors duration-300">
                   <thead className="bg-[var(--bg-color)] transition-colors duration-300">
                     <tr>
+                      <th className="px-6 py-3">
+                        <input
+                          type="checkbox"
+                          checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedUsers.includes(u.id))}
+                          onChange={e => e.target.checked ? setSelectedUsers(paginatedUsers.map(u => u.id)) : setSelectedUsers([])}
+                        />
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">ID</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Role</th>
@@ -174,8 +216,20 @@ const AdminDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--card-bg)] divide-y divide-[var(--border-color)] transition-colors duration-300">
-                    {displayedUsers.map(user => (
+                    {paginatedUsers.map(user => (
                       <tr key={user.id} className="hover:bg-[var(--bg-color)] transition-colors duration-200">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(user.id)}
+                            onChange={e => {
+                              const checked = e.target.checked;
+                              setSelectedUsers(prev =>
+                                checked ? [...prev, user.id] : prev.filter(id => id !== user.id)
+                              );
+                            }}
+                          />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.role}</td>
@@ -189,6 +243,25 @@ const AdminDashboard: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  className="px-4 py-2 bg-gray-200 rounded"
+                >
+                  {t('previous') as string}
+                </button>
+                <span>
+                  {t('page') as string} {currentPage}/{totalPages}
+                </span>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                  className="px-4 py-2 bg-gray-200 rounded"
+                >
+                  {t('next') as string}
+                </button>
               </div>
             </section>
           )}

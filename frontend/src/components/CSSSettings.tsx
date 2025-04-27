@@ -14,9 +14,11 @@ const CSSSettings: React.FC = () => {
   const { t } = useTranslation();
   // CODEX: Initialize with saved preference or default
   const [current, setCurrent] = useState(getPreferences().theme || presets[0].file);
+  // CODEX: Custom CSS content for uploads
+  const [customCssContent, setCustomCssContent] = useState<string | null>(null);
 
   useEffect(() => {
-    // CODEX: Apply theme to document
+    // CODEX: Handle preset via <link>
     let link = document.getElementById('theme-css') as HTMLLinkElement;
     if (!link) {
       link = document.createElement('link');
@@ -24,11 +26,22 @@ const CSSSettings: React.FC = () => {
       link.id = 'theme-css';
       document.head.appendChild(link);
     }
-    link.href = current;
-    
-    // CODEX: Save preference to storage
+    link.href = current || '';
+    // CODEX: Handle custom CSS via <style>
+    let styleTag = document.getElementById('custom-css') as HTMLStyleElement;
+    if (customCssContent) {
+      if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'custom-css';
+        document.head.appendChild(styleTag);
+      }
+      styleTag.innerHTML = customCssContent;
+    } else if (styleTag) {
+      styleTag.remove();
+    }
+    // CODEX: Persist theme preference (preset only)
     savePreferences({ theme: current });
-  }, [current]);
+  }, [current, customCssContent]);
 
   const handlePreset = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrent(e.target.value);
@@ -37,8 +50,14 @@ const CSSSettings: React.FC = () => {
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setCurrent(url);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result as string;
+      // CODEX: Set custom CSS and clear preset
+      setCustomCssContent(text);
+      setCurrent('');
+    };
+    reader.readAsText(file);
   };
 
   return (

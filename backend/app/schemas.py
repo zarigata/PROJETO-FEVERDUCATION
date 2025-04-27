@@ -19,6 +19,8 @@ class UserRead(UserBase):
     name: Optional[str] = None
     birthday: Optional[date] = None
     profile_photo: Optional[str] = None
+    # CODEX: link to school
+    school_id: Optional[int] = None
     class Config:
         orm_mode = True
 
@@ -30,6 +32,8 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     birthday: Optional[date] = None
     profile_photo: Optional[str] = None
+    # CODEX: allow updating school assignment
+    school_id: Optional[int] = None
 
 # Classroom schemas
 class ClassroomBase(BaseModel):
@@ -42,8 +46,23 @@ class ClassroomCreate(ClassroomBase):
 class ClassroomRead(ClassroomBase):
     id: int
     teacher_id: int
+    school_id: int
     created_at: datetime
     students: List[UserRead] = []
+    class Config:
+        orm_mode = True
+
+# School schemas
+class SchoolBase(BaseModel):
+    name: str
+
+class SchoolCreate(SchoolBase):
+    pass
+
+class SchoolRead(SchoolBase):
+    id: int
+    admin_id: int
+    created_at: datetime
     class Config:
         orm_mode = True
 

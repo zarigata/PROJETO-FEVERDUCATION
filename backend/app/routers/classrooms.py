@@ -12,9 +12,12 @@ router = APIRouter(prefix="/classrooms", tags=["classrooms"])
 
 @router.post("/", response_model=ClassroomRead)
 def create_classroom(classroom_in: ClassroomCreate, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db)):
+    # CODEX: ensure teacher is assigned to a school
+    if not current_teacher.school_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Teacher has no school assigned")
     # Generate a unique join code for the classroom
     join_code = uuid.uuid4().hex[:8]
-    classroom = Classroom(name=classroom_in.name, join_code=join_code, teacher_id=current_teacher.id)
+    classroom = Classroom(name=classroom_in.name, join_code=join_code, teacher_id=current_teacher.id, school_id=current_teacher.school_id)
     db.add(classroom)
     db.commit()
     db.refresh(classroom)
