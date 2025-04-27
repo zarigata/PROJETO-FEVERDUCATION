@@ -21,3 +21,4 @@ ACCESS_TOKEN_EXPIRE_MINUTES = cfg.get("access_token_expires_minutes")
 REFRESH_TOKEN_EXPIRE_MINUTES = cfg.get("refresh_token_expires_minutes")
 
 DATABASE_URL = os.getenv("DATABASE_URL", cfg.get("database_url"))
+REDIS_URL = os.getenv("REDIS_URL", cfg.get("redis_url", "redis://localhost:6379/0"))

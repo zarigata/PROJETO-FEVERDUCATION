@@ -7,11 +7,15 @@ import httpx
 import json
 from sqlalchemy.orm import Session
 
-from app.config import OLLAMA_HOST, OLLAMA_PORT, OLLAMA_MODEL, OLLAMA_STYLE, OLLAMA_PRE_PROMPT
+from app.config import OLLAMA_HOST, OLLAMA_PORT, OLLAMA_MODEL, OLLAMA_STYLE, OLLAMA_PRE_PROMPT, REDIS_URL
 from app.database import get_db
 from app.models import Analytics, UserRole, ChatSession, ChatMessage
 from app.schemas import AnalyticsRead
 from app.routers.auth import require_role
+import redis.asyncio as aioredis
+
+# Initialize Redis client for caching
+redis_client = aioredis.from_url(REDIS_URL, encoding="utf-8", decode_responses=True)
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
@@ -129,6 +133,13 @@ async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRo
     model = request.model or OLLAMA_MODEL
     style = request.style or OLLAMA_STYLE
     pre_prompt = request.pre_prompt or OLLAMA_PRE_PROMPT
+    # Redis caching for AI lesson responses
+    cache_key = f"ai_lesson:{current_teacher.id}:{model}:{request.prompt}"
+    cached = await redis_client.get(cache_key)
+    if cached:
+        async def replay():
+            yield cached
+        return StreamingResponse(replay(), media_type="text/plain")
     # CODEX: initialize streaming and peek first chunk to handle HTTP errors before response start
     stream = _stream_ollama(request.prompt, host, port, model, style, pre_prompt)
     try:
@@ -149,6 +160,8 @@ async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRo
         # record analytics after full response
         record = Analytics(teacher_id=current_teacher.id, data={"prompt": request.prompt, "response": response_buffer})
         db.add(record); db.commit(); db.refresh(record)
+        # Cache the lesson response in Redis (1h expiration)
+        await redis_client.set(cache_key, response_buffer, ex=3600)
     return StreamingResponse(event_stream(), media_type="text/plain")
 
 @router.post("/analytics")
@@ -158,6 +171,13 @@ async def ai_generate_analytics(request: Prompt, current_teacher=Depends(require
     model = request.model or OLLAMA_MODEL
     style = request.style or OLLAMA_STYLE
     pre_prompt = request.pre_prompt or OLLAMA_PRE_PROMPT
+    # Redis caching for AI analytics responses
+    cache_key = f"ai_analytics:{current_teacher.id}:{model}:{request.prompt}"
+    cached = await redis_client.get(cache_key)
+    if cached:
+        async def replay():
+            yield cached
+        return StreamingResponse(replay(), media_type="text/plain")
     # CODEX: initialize streaming and peek first chunk to handle HTTP errors before response start
     stream = _stream_ollama(request.prompt, host, port, model, style, pre_prompt)
     try:
@@ -178,4 +198,6 @@ async def ai_generate_analytics(request: Prompt, current_teacher=Depends(require
         # record analytics after full response
         record = Analytics(teacher_id=current_teacher.id, data={"prompt": request.prompt, "response": response_buffer})
         db.add(record); db.commit(); db.refresh(record)
+        # Cache the analytics response in Redis (1h expiration)
+        await redis_client.set(cache_key, response_buffer, ex=3600)
     return StreamingResponse(event_stream(), media_type="text/plain")
