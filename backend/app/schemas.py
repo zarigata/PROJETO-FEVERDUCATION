@@ -176,3 +176,11 @@ class AnalyticsSummaryItem(BaseModel):
     label: str  # translation key or label
     value: str
     change: Optional[str] = None
+
+# CODEX: System status schema for admin dashboard
+class SystemStatus(BaseModel):
+    timestamp: datetime
+    db_alive: bool
+    user_count: int
+    class Config:
+        orm_mode = True
