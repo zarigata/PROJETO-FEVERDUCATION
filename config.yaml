@@ -1,4 +1,4 @@
-ollama_host: "192.168.15.115"
+ollama_host: "localhost"
 ollama_port: 11434
 ollama_model: "llama3.2"
 ollama_style: "default"

@@ -1,5 +1,5 @@
 # CODEX: AI-powered endpoints calling Ollama for tutor, lesson, and analytics
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List
@@ -28,6 +28,20 @@ class Prompt(BaseModel):
     pre_prompt: Optional[str] = None
     session_id: Optional[int] = None
 
+# CODEX: Localization mappings
+_error_messages = {
+    'stream_error': {
+        'en': "\n\nSorry, I had trouble processing your request. Please try again.",
+        'pt': "\n\nDesculpe, tive problemas ao processar sua solicitação. Por favor, tente novamente.",
+        'jp': "\n\n申し訳ありませんが、ご要求の処理中に問題が発生しました。もう一度お試しください。"
+    },
+    'session_not_found': {
+        'en': "Session not found",
+        'pt': "Sessão não encontrada",
+        'jp': "セッションが見つかりません"
+    }
+}
+
 async def _stream_ollama(prompt: str, host: str, port: int, model: str, style: Optional[str], pre_prompt: Optional[str], history: Optional[List[dict]] = None):
     # CODEX: Use OpenAI-compatible streaming endpoint
     url = f"http://{host}:{port}/v1/chat/completions"
@@ -37,7 +51,9 @@ async def _stream_ollama(prompt: str, host: str, port: int, model: str, style: O
         messages.extend(history)
     messages.append({"role": "user", "content": prompt})
     payload = {"model": model, "messages": messages, "stream": True}
-    async with httpx.AsyncClient(timeout=None) as client:
+    # CODEX: add retry/backoff for resilient Ollama calls
+    transport = httpx.RetryTransport(retries=3, backoff_factor=0.5, status_forcelist=[502,503,504])
+    async with httpx.AsyncClient(timeout=None, transport=transport) as client:
         async with client.stream("POST", url, json=payload) as resp:
             if resp.status_code != 200:
                 # fully read error body
@@ -66,18 +82,22 @@ async def _stream_ollama(prompt: str, host: str, port: int, model: str, style: O
                     yield content_chunk
 
 @router.post("/tutor")
-async def ai_tutor(request: Prompt, current_student=Depends(require_role(UserRole.student)), db: Session = Depends(get_db)):
+async def ai_tutor(request: Prompt, current_student=Depends(require_role(UserRole.student)), db: Session = Depends(get_db), accept_language: Optional[str] = Header(None)):
     host = request.host or OLLAMA_HOST
     port = request.port or OLLAMA_PORT
     model = request.model or OLLAMA_MODEL
     style = request.style or OLLAMA_STYLE
     pre_prompt = request.pre_prompt or OLLAMA_PRE_PROMPT
+    # Determine preferred language
+    lang = accept_language.split(",")[0].split("-")[0] if accept_language else "en"
+    if lang not in _error_messages['stream_error']:
+        lang = "en"
     # CODEX: handle chat session and user message history
     history_msgs: List[dict] = []  # default empty history
     if request.session_id is not None:
         session = db.query(ChatSession).filter_by(id=request.session_id, user_id=current_student.id).first()
         if not session:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=_error_messages['session_not_found'][lang])
         # prune oldest if exceed 128
         count = db.query(ChatMessage).filter_by(session_id=session.id).count()
         if count >= 128:
@@ -101,7 +121,7 @@ async def ai_tutor(request: Prompt, current_student=Depends(require_role(UserRol
         first_chunk = await stream.__anext__()
     except Exception:
         async def event_stream_error():
-            yield "\n\nSorry, I had trouble processing your request. Please try again."
+            yield _error_messages['stream_error'][lang]
         return StreamingResponse(event_stream_error(), media_type="text/plain")
     response_buffer = first_chunk
     async def event_stream():
@@ -127,12 +147,16 @@ async def ai_tutor(request: Prompt, current_student=Depends(require_role(UserRol
     return StreamingResponse(event_stream(), media_type="text/plain")
 
 @router.post("/lesson")
-async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db)):
+async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db), accept_language: Optional[str] = Header(None)):
     host = request.host or OLLAMA_HOST
     port = request.port or OLLAMA_PORT
     model = request.model or OLLAMA_MODEL
     style = request.style or OLLAMA_STYLE
     pre_prompt = request.pre_prompt or OLLAMA_PRE_PROMPT
+    # Determine preferred language
+    lang = accept_language.split(",")[0].split("-")[0] if accept_language else "en"
+    if lang not in _error_messages['stream_error']:
+        lang = "en"
     # Redis caching for AI lesson responses
     cache_key = f"ai_lesson:{current_teacher.id}:{model}:{request.prompt}"
     cached = await redis_client.get(cache_key)
@@ -146,7 +170,7 @@ async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRo
         first_chunk = await stream.__anext__()
     except Exception:
         async def event_stream_error():
-            yield "\n\nSorry, I had trouble processing your request. Please try again."
+            yield _error_messages['stream_error'][lang]
         return StreamingResponse(event_stream_error(), media_type="text/plain")
     response_buffer = first_chunk
     async def event_stream():
@@ -165,12 +189,16 @@ async def ai_lesson(request: Prompt, current_teacher=Depends(require_role(UserRo
     return StreamingResponse(event_stream(), media_type="text/plain")
 
 @router.post("/analytics")
-async def ai_generate_analytics(request: Prompt, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db)):
+async def ai_generate_analytics(request: Prompt, current_teacher=Depends(require_role(UserRole.teacher)), db: Session = Depends(get_db), accept_language: Optional[str] = Header(None)):
     host = request.host or OLLAMA_HOST
     port = request.port or OLLAMA_PORT
     model = request.model or OLLAMA_MODEL
     style = request.style or OLLAMA_STYLE
     pre_prompt = request.pre_prompt or OLLAMA_PRE_PROMPT
+    # Determine preferred language
+    lang = accept_language.split(",")[0].split("-")[0] if accept_language else "en"
+    if lang not in _error_messages['stream_error']:
+        lang = "en"
     # Redis caching for AI analytics responses
     cache_key = f"ai_analytics:{current_teacher.id}:{model}:{request.prompt}"
     cached = await redis_client.get(cache_key)
@@ -184,7 +212,7 @@ async def ai_generate_analytics(request: Prompt, current_teacher=Depends(require
         first_chunk = await stream.__anext__()
     except Exception:
         async def event_stream_error():
-            yield "\n\nSorry, I had trouble processing your request. Please try again."
+            yield _error_messages['stream_error'][lang]
         return StreamingResponse(event_stream_error(), media_type="text/plain")
     response_buffer = first_chunk
     async def event_stream():

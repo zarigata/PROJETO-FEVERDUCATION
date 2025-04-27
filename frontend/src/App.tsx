@@ -6,6 +6,7 @@ import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Register from './components/Register';
+import LanguageSelector from './components/LanguageSelector';
 import { loadPreferencesFromServer } from './services/UserPreferences';
 
 /**
@@ -25,7 +26,14 @@ function App() {
         {process.env.REACT_APP_ENABLE_REGISTER === 'true' && (
           <Route path="/register" element={<Register />} />
         )}
-        <Route path="/student" element={<PrivateRoute role="student"><StudentDashboard /></PrivateRoute>} />
+        <Route path="/student" element={
+          <PrivateRoute role="student">
+            <div className="flex justify-between items-center p-2">
+              <LanguageSelector />
+              <StudentDashboard />
+            </div>
+          </PrivateRoute>
+        } />
         <Route path="/teacher" element={<PrivateRoute role="teacher"><TeacherDashboard /></PrivateRoute>} />
         <Route path="/admin" element={<PrivateRoute role="admin"><AdminDashboard /></PrivateRoute>} />
         <Route path="/" element={<Navigate to="/login" replace />} />

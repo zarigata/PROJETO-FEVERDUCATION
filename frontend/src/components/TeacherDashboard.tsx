@@ -18,8 +18,8 @@ const TeacherDashboard: React.FC = () => {
     { key: 'classrooms', label: t('classrooms') },
     { key: 'students', label: t('students') },
     { key: 'lesson_generator', label: t('lesson_generator') },
-    { key: 'ai_integration', label: t('ai_integration') },
-    { key: 'settings', label: 'Settings' },
+    { key: 'analytics', label: t('analytics') },
+    { key: 'settings', label: t('settings') },
   ];
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [analytics, setAnalytics] = useState<any[]>([]);
@@ -744,10 +744,10 @@ const TeacherDashboard: React.FC = () => {
               )}
             </section>
           )}
-          {activeTab === 'ai_integration' && (
+          {activeTab === 'analytics' && (
             <section className="mb-6">
-              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('ai_integration')}</h2>
-              <AIChat endpoint="analytics" title={t('ai_integration')} placeholder={t('ai_assistant_placeholder')} poweredBy="FeVe" />
+              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('analytics')}</h2>
+              <AIChat endpoint="analytics" title={t('analytics')} placeholder={t('ai_assistant_placeholder')} poweredBy="FeVe" />
             </section>
           )}
           {activeTab === 'settings' && (
