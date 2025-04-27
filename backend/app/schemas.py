@@ -170,3 +170,9 @@ class ChatSessionRead(BaseModel):
     messages: list[ChatMessageRead] = []
     class Config:
         orm_mode = True
+
+# CODEX: Summary analytics item schema for dashboards
+class AnalyticsSummaryItem(BaseModel):
+    label: str  # translation key or label
+    value: str
+    change: Optional[str] = None
