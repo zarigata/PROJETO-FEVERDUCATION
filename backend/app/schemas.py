@@ -1,7 +1,7 @@
 # CODEX: Pydantic schemas for FeverDucation
 from datetime import datetime, date
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.models import UserRole
 
 # User schemas
@@ -16,8 +16,7 @@ class UserCreate(UserBase):
 class ClassroomBrief(BaseModel):
     id: int
     name: str
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserRead(UserBase):
     id: int
@@ -27,8 +26,7 @@ class UserRead(UserBase):
     profile_photo: Optional[str] = None
     taught_classrooms: Optional[list[ClassroomBrief]] = []  # For teachers
     classrooms: Optional[list[ClassroomBrief]] = []         # For students
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(BaseModel):
     email: Optional[str] = None
@@ -52,8 +50,7 @@ class ClassroomRead(ClassroomBase):
     teacher_id: int
     created_at: datetime
     students: List[UserRead] = []
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Subject schemas
 class SubjectBase(BaseModel):
@@ -66,8 +63,7 @@ class SubjectCreate(SubjectBase):
 class SubjectRead(SubjectBase):
     id: int
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Lesson schemas
 class LessonBase(BaseModel):
@@ -82,8 +78,7 @@ class LessonCreate(LessonBase):
 class LessonRead(LessonBase):
     id: int
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Assignment schemas
 class AssignmentBase(BaseModel):
@@ -100,8 +95,7 @@ class AssignmentRead(AssignmentBase):
     classroom_id: int
     subject_id: Optional[int]
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Grade schemas
 class GradeBase(BaseModel):
@@ -116,8 +110,7 @@ class GradeRead(GradeBase):
     student_id: int
     assignment_id: int
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Classroom join model
 class JoinModel(BaseModel):
@@ -136,8 +129,7 @@ class AnalyticsRead(BaseModel):
     teacher_id: Optional[int]
     data: dict
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Audit log schema
 class AuditLogRead(BaseModel):
@@ -145,8 +137,7 @@ class AuditLogRead(BaseModel):
     user_id: Optional[int]
     action: str
     timestamp: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Preferences schemas
 class PreferencesBase(BaseModel):
@@ -154,8 +145,7 @@ class PreferencesBase(BaseModel):
     language: str
 
 class PreferencesRead(PreferencesBase):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class PreferencesUpdate(BaseModel):
     theme: Optional[str] = None
@@ -168,13 +158,11 @@ class ChatMessageRead(BaseModel):
     sender: str
     text: str
     created_at: datetime
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ChatSessionRead(BaseModel):
     id: int
     user_id: int
     created_at: datetime
     messages: list[ChatMessageRead] = []
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
