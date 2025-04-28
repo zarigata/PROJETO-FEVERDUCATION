@@ -1,7 +1,8 @@
 # CODEX: CRUD routes for user management
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from app.database import get_db
 from app.models import User, UserRole
 from app.schemas import UserCreate, UserRead, UserUpdate, JoinModel as ClassroomJoinModel  # for join classroom functionality
@@ -22,8 +23,12 @@ def create_user(user_in: UserCreate, current_admin=Depends(require_role(UserRole
     return user
 
 @router.get("/", response_model=List[UserRead])
-def read_users(current_admin=Depends(require_role(UserRole.admin)), db: Session = Depends(get_db)):
-    users = db.query(User).all()
+def read_users(search: Optional[str] = Query(None, description="Search by email or name"), current_admin=Depends(require_role(UserRole.admin)), db: Session = Depends(get_db)):
+    query = db.query(User)
+    if search:
+        pattern = f"%{search}%"
+        query = query.filter(or_(User.email.ilike(pattern), User.name.ilike(pattern)))
+    users = query.all()
     # Attach classroom info for admin listing
     def classroom_brief_list(classrooms):
         return [{"id": c.id, "name": c.name} for c in classrooms]

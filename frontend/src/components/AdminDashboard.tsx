@@ -20,11 +20,16 @@ const AdminDashboard: React.FC = () => {
   const [form, setForm] = useState({ email: '', password: '', role: 'student', timezone: 'UTC', language: 'en' });
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // Filter users by email or name
-  const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+
+  // Trigger global search on server
+  const handleSearch = async () => {
+    try {
+      const res = await api.get('/users', { params: { search: searchTerm } });
+      setUsers(res.data);
+    } catch (err) {
+      console.error('Search failed:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,8 +152,8 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </form>
               )}
-              {/* Search users */}
-              <div className="mb-4">
+              {/* Global user search */}
+              <div className="mb-4 flex items-center gap-2">
                 <input
                   type="text"
                   placeholder={t('search_users') as string}
@@ -156,6 +161,9 @@ const AdminDashboard: React.FC = () => {
                   onChange={e => setSearchTerm(e.target.value)}
                   className="border p-2 rounded w-full max-w-sm"
                 />
+                <button onClick={handleSearch} className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg">
+                  {t('search')}
+                </button>
               </div>
               <div className="overflow-x-auto mt-4">
                 <table className="min-w-full divide-y divide-[var(--border-color)] transition-colors duration-300">
@@ -171,7 +179,7 @@ const AdminDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--card-bg)] divide-y divide-[var(--border-color)] transition-colors duration-300">
-                    {filteredUsers.map(user => (
+                    {users.map(user => (
                       <tr key={user.id} className="hover:bg-[var(--bg-color)] transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.email}</td>
