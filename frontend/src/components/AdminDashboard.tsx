@@ -141,6 +141,7 @@ const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Role</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Timezone</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Language</th>
+<th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Classrooms</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
@@ -152,6 +153,14 @@ const AdminDashboard: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.role}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.timezone || 'UTC'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.language || 'en'}</td>
+<td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
+  {/* CODEX: Show classrooms for each user */}
+  {user.role === 'teacher' && user.taught_classrooms && user.taught_classrooms.length > 0
+    ? user.taught_classrooms.map((c: any) => c.name).join(', ')
+    : user.classrooms && user.classrooms.length > 0
+      ? user.classrooms.map((c: any) => c.name).join(', ')
+      : <span className="opacity-60">-</span>}
+</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
                           <button onClick={() => handleEditClick(user)} className="text-blue-500 mr-2">Edit</button>
                           <button onClick={() => deleteUser(user.id)} className="text-red-500">Delete</button>

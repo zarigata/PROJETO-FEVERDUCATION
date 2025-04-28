@@ -23,7 +23,19 @@ def create_user(user_in: UserCreate, current_admin=Depends(require_role(UserRole
 
 @router.get("/", response_model=List[UserRead])
 def read_users(current_admin=Depends(require_role(UserRole.admin)), db: Session = Depends(get_db)):
-    return db.query(User).all()
+    users = db.query(User).all()
+    # Attach classroom info for admin listing
+    def classroom_brief_list(classrooms):
+        return [{"id": c.id, "name": c.name} for c in classrooms]
+    result = []
+    for user in users:
+        user_data = UserRead.from_orm(user).dict()
+        # For teachers: classrooms they teach
+        user_data["taught_classrooms"] = classroom_brief_list(getattr(user, "taught_classrooms", []))
+        # For students: classrooms they are in
+        user_data["classrooms"] = classroom_brief_list(getattr(user, "classrooms", []))
+        result.append(user_data)
+    return result
 
 @router.get("/{user_id}", response_model=UserRead)
 def read_user(user_id: int, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):

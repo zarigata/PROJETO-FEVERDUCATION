@@ -13,12 +13,20 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class ClassroomBrief(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
 class UserRead(UserBase):
     id: int
     created_at: datetime
     name: Optional[str] = None
     birthday: Optional[date] = None
     profile_photo: Optional[str] = None
+    taught_classrooms: Optional[list[ClassroomBrief]] = []  # For teachers
+    classrooms: Optional[list[ClassroomBrief]] = []         # For students
     class Config:
         orm_mode = True
 

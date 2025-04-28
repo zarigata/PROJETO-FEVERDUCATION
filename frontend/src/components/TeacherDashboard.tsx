@@ -10,6 +10,7 @@ import DashboardLayout from './DashboardLayout';
 import TabNav from './TabNav';
 import CSSSettings from './CSSSettings';
 import AIChat from './AIChat';
+import LanguageSettings from './LanguageSettings';
 
 const TeacherDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -752,19 +753,18 @@ const TeacherDashboard: React.FC = () => {
           )}
           {activeTab === 'settings' && (
             <section className="mb-6">
-              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">Teacher Settings</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="card bg-[var(--bg-color)] p-6 rounded-lg shadow-md border border-[var(--border-color)] transition-colors duration-300">
-                  <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">CSS Theme Settings</h3>
-                  <CSSSettings />
-                </div>
-                <div className="card bg-[var(--bg-color)] p-6 rounded-lg shadow-md border border-[var(--border-color)] transition-colors duration-300">
-                  <h3 className="text-xl font-medium text-[var(--text-color)] mb-4">Placeholder: Profile Settings</h3>
-                  <p className="text-[var(--text-color)] opacity-70 mb-4">This section will allow customization of your teacher profile and preferences.</p>
-                  <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 font-medium transform hover:scale-102 opacity-50" disabled>
-                    Edit Profile
-                  </button>
-                </div>
+              <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('settings')}</h2>
+              <div className="mb-6">
+                <CSSSettings />
+              </div>
+              <div className="mb-6">
+                {/* CODEX: Language selection styled as per requirements */}
+                <LanguageSettings />
+              </div>
+              <div className="mb-6">
+                <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:bg-[var(--secondary-color)] transition-all duration-200 font-medium transform hover:scale-102 opacity-50" disabled>
+                  Edit Profile
+                </button>
               </div>
             </section>
           )}
