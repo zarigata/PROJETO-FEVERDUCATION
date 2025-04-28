@@ -116,12 +116,25 @@ const TeacherDashboard: React.FC = () => {
         Make the content engaging, interactive, and appropriate for the class level.
       `;
       
-      const { data } = await api.post(
-        '/ai/lesson',
-        { prompt: enhancedPrompt, model: aiModel },
-        { responseType: 'text' }
-      );
-      setLesson(data);
+      const response = await fetch('/api/ollama/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: enhancedPrompt,
+          model: aiModel,
+          temperature: temperature,
+          stream: false
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate lesson: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setLesson(data.response);
       
       // Save to recent templates or history here if needed
     } catch (error) {
@@ -130,53 +143,6 @@ const TeacherDashboard: React.FC = () => {
     } finally {
       setIsGenerating(false);
     }
-  };
-
-  // Handler functions for AI dashboard buttons
-  const handleUseTemplate = () => {
-    const template = `
-      Generate a ${lessonType} for the class "${classrooms.find(c => c.id === selectedClassroom)?.name || selectedClassroom}".
-      
-      Include:
-      - Learning objectives
-      - Materials needed
-      - Introduction
-      - Main content
-      - Activities
-      - Assessment
-      - Homework/follow-up
-    `;
-    setLessonPrompt(template.trim());
-  };
-
-  const handleClearPrompt = () => {
-    setLessonPrompt('');
-    setLesson('');
-  };
-
-  const handleSaveLesson = async () => {
-    if (!lesson) return;
-    try {
-      await api.post('/lessons', {
-        classroom_id: selectedClassroom,
-        title: `${lessonType} - ${new Date().toLocaleDateString()}`,
-        description: lesson,
-        scheduled_date: new Date().toISOString().split('T')[0],
-      });
-      alert(t('lesson_saved_success'));
-    } catch (err) {
-      console.error(err);
-      alert(t('lesson_saved_error'));
-    }
-  };
-
-  const handleCopyLesson = () => {
-    navigator.clipboard.writeText(lesson);
-    alert(t('copied_to_clipboard'));
-  };
-
-  const handleRegenerate = () => {
-    generateLesson();
   };
 
   return (
@@ -633,13 +599,13 @@ const TeacherDashboard: React.FC = () => {
                     
                     <div className="flex justify-between">
                       <div className="flex gap-2">
-                        <button onClick={handleUseTemplate} className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
+                        <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                           </svg>
                           Use Template
                         </button>
-                        <button onClick={handleClearPrompt} className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
+                        <button className="bg-[var(--bg-color-hover)] text-[var(--text-color)] px-4 py-2 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -751,19 +717,19 @@ const TeacherDashboard: React.FC = () => {
                   <div className="bg-[var(--bg-color-hover)] p-4 flex justify-between items-center border-b border-[var(--border-color)]">
                     <h3 className="font-medium text-[var(--text-color)]">Generated Lesson Content</h3>
                     <div className="flex gap-2">
-                      <button onClick={handleSaveLesson} className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
+                      <button className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
                         </svg>
                         Save
                       </button>
-                      <button onClick={handleCopyLesson} className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
+                      <button className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                         Copy
                       </button>
-                      <button onClick={handleRegenerate} className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
+                      <button className="bg-[var(--bg-color)] text-[var(--text-color)] px-3 py-1 rounded-lg hover:bg-[var(--border-color)] transition-all duration-200 flex items-center text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>

@@ -28,7 +28,7 @@ const StudentDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const [analyticsRes, classroomsRes, gradesRes, userRes] = await Promise.all([
-          api.get('/analytics/summary'),
+          api.get('/analytics'),
           api.get('/classrooms'),
           api.get('/grades'),
           api.get('/auth/me'),
@@ -98,18 +98,99 @@ const StudentDashboard: React.FC = () => {
           {activeTab === 'analytics' && (
             <section className="mb-6">
               <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('analytics')}</h2>
-              {/* CODEX: Student analytics summary cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {analytics.length > 0 ? analytics.map((item, i) => (
-                  <div key={i} className="card-neumorphic p-6">
-                    <h3 className="text-lg font-medium text-[var(--text-color)] mb-2">{t(item.label)}</h3>
-                    <p className="text-2xl text-[var(--primary-color)] transition-colors duration-300">{item.value}</p>
-                    {item.change && <p className="text-sm text-[var(--border-color)] mt-1">{item.change}</p>}
+              
+              {/* CODEX: Student profile and level section with gamification */}
+              <div className="card-neumorphic p-6 mb-8">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] flex items-center justify-center text-white text-2xl font-bold">
+                      {/* Student initials or avatar */}
+                      JS
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 badge badge-intermediate achievement-unlocked">
+                      Lvl 12
+                    </div>
                   </div>
-                )) : (
-                  <p className="text-[var(--text-color)]">{t('no_data')}</p>
-                )}
+                  
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-[var(--text-color)] mb-1">{user?.name}</h3>
+                    <p className="text-sm text-[var(--text-color)] opacity-70 mb-1">{`${t('email')}: ${user?.email}`}</p>
+                    <p className="text-sm text-[var(--text-color)] opacity-70 mb-4">{`${t('birthday')}: ${user?.birthday ? new Date(user.birthday).toLocaleDateString() : ''}`}</p>
+                    
+                    <div className="mb-4">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm font-medium text-[var(--text-color)]">{t('experience')}</span>
+                        <span className="text-sm font-medium text-[var(--primary-color)]">1,250 / 2,000 XP</span>
+                      </div>
+                      <div className="progress-container">
+                        <div className="progress-bar" style={{ width: '62.5%' }}></div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      <div className="badge badge-beginner">{t('python_novice')}</div>
+                      <div className="badge badge-intermediate">{t('math_enthusiast')}</div>
+                      <div className="badge">{t('five_day_streak')}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center md:text-right">
+                    <div className="text-4xl font-bold text-[var(--primary-color)] mb-1">87</div>
+                    <div className="text-sm text-[var(--text-color)] opacity-70">{t('overall_score')}</div>
+                  </div>
+                </div>
               </div>
+              
+              {/* CODEX: Analytics cards with visual representations */}
+              <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4 transition-colors duration-300">{t('your_progress')}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {analytics.length > 0 ? analytics.map((item, i) => (
+                  <div key={i} className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">{item.label}</h3>
+                    <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">{item.value}</p>
+                    {item.change && (
+                      <div className={`text-sm mt-2 ${parseFloat(item.change) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {parseFloat(item.change) >= 0 ? '↑' : '↓'} {Math.abs(parseFloat(item.change))}% from last week
+                      </div>
+                    )}
+                  </div>
+                )) : 
+                <>
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">{t('course_progress')}</h3>
+                    <div className="progress-container">
+                      <div className="progress-bar" style={{ width: '65%' }}></div>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <p className="text-lg font-medium text-[var(--primary-color)]">65%</p>
+                      <p className="text-sm text-[var(--text-color)] opacity-70">+5% this week</p>
+                    </div>
+                  </div>
+                  
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">{t('assignments')}</h3>
+                    <div className="flex items-end gap-2">
+                      <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">7</p>
+                      <p className="text-xl text-[var(--text-color)] opacity-70 mb-1">/10</p>
+                    </div>
+                    <div className="mt-2 flex justify-between">
+                      <p className="text-[var(--text-color)] opacity-70">{t('completed')}</p>
+                      <p className="text-sm text-green-500">2 days ahead of schedule</p>
+                    </div>
+                  </div>
+                  
+                  <div className="card-neumorphic p-5 hover-scale">
+                    <h3 className="font-medium text-[var(--text-color)] mb-2">{t('study_time')}</h3>
+                    <p className="text-3xl text-[var(--primary-color)] transition-colors duration-300">12.5h</p>
+                    <div className="mt-2 flex justify-between">
+                      <p className="text-[var(--text-color)] opacity-70">{t('this_week')}</p>
+                      <p className="text-sm text-green-500">↑ 2.5h from last week</p>
+                    </div>
+                  </div>
+                </>
+                }
+              </div>
+              
               {/* CODEX: Recent achievements section */}
               <h3 className="text-xl font-semibold text-[var(--text-color)] mt-8 mb-4 transition-colors duration-300">{t('recent_achievements')}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

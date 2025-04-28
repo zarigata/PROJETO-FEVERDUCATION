@@ -18,7 +18,6 @@ from app.routers.lessons import router as lessons_router
 from app.routers.advisor import router as advisor_router
 from app.routers.preferences import router as preferences_router
 from app.routers.chat import router as chat_router
-from app.routers.status import router as status_router
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -67,7 +66,6 @@ app.include_router(lessons_router, prefix="/api")
 app.include_router(advisor_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
 app.include_router(preferences_router, prefix="/api/user")
-app.include_router(status_router, prefix="/api")
 
 # Root endpoint
 @app.get("/")

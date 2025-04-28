@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models import User, UserRole, AuditLog
+from app.models import User, UserRole
 from app.schemas import UserCreate, UserRead, UserUpdate, JoinModel as ClassroomJoinModel  # for join classroom functionality
 from app.security import get_password_hash
 from app.routers.auth import get_current_active_user, require_role
@@ -19,10 +19,6 @@ def create_user(user_in: UserCreate, current_admin=Depends(require_role(UserRole
     db.add(user)
     db.commit()
     db.refresh(user)
-    # CODEX: log admin action
-    log = AuditLog(user_id=current_admin.id, action=f"Created user {user.email} (id:{user.id})")
-    db.add(log)
-    db.commit()
     return user
 
 @router.get("/", response_model=List[UserRead])
@@ -62,10 +58,6 @@ def update_user(user_id: int, user_in: UserUpdate, current_user: User = Depends(
         target.profile_photo = user_in.profile_photo
     db.commit()
     db.refresh(target)
-    # CODEX: log update action
-    log = AuditLog(user_id=current_user.id, action=f"Updated user {target.email} (id:{target.id})")
-    db.add(log)
-    db.commit()
     return target
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -73,8 +65,5 @@ def delete_user(user_id: int, current_admin=Depends(require_role(UserRole.admin)
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    # CODEX: log admin deletion
-    log = AuditLog(user_id=current_admin.id, action=f"Deleted user {user.email} (id:{user.id})")
-    db.add(log)
     db.delete(user)
     db.commit()

@@ -1,7 +1,7 @@
 # CODEX: SQLAlchemy models defining the database schema for FeverDucation
 import enum
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table, JSON, Date, Text
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table, JSON, Date
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -34,11 +34,6 @@ class User(Base):
     name = Column(String, nullable=True)
     birthday = Column(Date, nullable=True)
     profile_photo = Column(String, nullable=True)
-    # CODEX: Link teacher to school
-    school_id = Column(Integer, ForeignKey('schools.id'), nullable=True)
-    school = relationship('School', back_populates='teachers')
-    # CODEX: Admin-created schools
-    created_schools = relationship('School', back_populates='admin')
 
     # Relationships
     taught_classrooms = relationship("Classroom", back_populates="teacher")
@@ -55,8 +50,6 @@ class Classroom(Base):
     name = Column(String, index=True, nullable=False)
     teacher_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    # CODEX: Link classroom to school
-    school_id = Column(Integer, ForeignKey('schools.id'), nullable=False)
 
     # Relationships
     teacher = relationship("User", back_populates="taught_classrooms")
@@ -66,8 +59,6 @@ class Classroom(Base):
     lessons = relationship("Lesson", back_populates="classroom")
     # CODEX: Subjects under classroom
     subjects = relationship("Subject", back_populates="classroom")
-    # CODEX: Relationship to school
-    school = relationship('School', back_populates='classrooms')
 
 # CODEX: Assignment model for classroom tasks
 class Assignment(Base):
@@ -115,19 +106,6 @@ class AuditLog(Base):
 
     user = relationship("User", back_populates="audit_logs")
 
-# CODEX: new School model for grouping teachers and classrooms
-class School(Base):
-    __tablename__ = 'schools'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)
-    admin_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    # CODEX: Relationships
-    admin = relationship('User', back_populates='created_schools')
-    teachers = relationship('User', back_populates='school')
-    classrooms = relationship('Classroom', back_populates='school')
-
 # CODEX: Chat sessions and messages for AI chat history
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
@@ -151,7 +129,7 @@ class Lesson(Base):
     id = Column(Integer, primary_key=True, index=True)
     classroom_id = Column(Integer, ForeignKey("classrooms.id"), nullable=False)
     title = Column(String, nullable=False)
-    description = Column(Text, nullable=True)
+    description = Column(String, nullable=True)
     scheduled_date = Column(Date, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
