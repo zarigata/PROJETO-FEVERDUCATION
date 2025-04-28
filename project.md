@@ -1,5 +1,5 @@
 FeverDucation Project Development Guide
-This document outlines the fundamental process and final steps for developing FeverDucation, an AI-powered educational platform for students, teachers, and administrators. The platform supports Portuguese, English, and Japanese, with a modular, scalable architecture and a Google/Android-inspired design. It is fully Dockerized (except for the Ollama AI server) and includes a customizable CSS filter for user-driven design changes. This guide is intended for AI developers or human contributors to ensure a consistent, production-ready implementation.
+This document outlines the fundamental process and final steps for developing FeverDucation, an AI-powered educational platform for students, teachers, and administrators. The platform supports Portuguese, English, Japanese, Spanish, French, German, and Chinese, with a modular, scalable architecture and a Google/Android-inspired design. It is fully Dockerized (except for the Ollama AI server) and includes a customizable CSS filter for user-driven design changes. This guide is intended for AI developers or human contributors to ensure a consistent, production-ready implementation.
 
 Project Overview
 FeverDucation is a web-based educational platform with three user roles:
@@ -8,7 +8,7 @@ Students: Access dashboards with analytics, classrooms, grades, and an AI Tutor 
 Teachers: Manage classrooms, generate AI-powered lessons (quizzes, text, etc.), and view advanced analytics with AI insights.
 Administrators: Oversee user management, system monitoring, and data troubleshooting via a hidden dashboard (local access only).
 
-The platform emphasizes modularity, multilingual support (Portuguese, English, Japanese), and a clean, modern UI. It uses Python (FastAPI) for the backend, TypeScript (React) for the frontend, PostgreSQL for the database, and Ollama for AI features, all configured via a config.yaml file.
+The platform emphasizes modularity, multilingual support (Portuguese, English, Japanese, Spanish, French, German, and Chinese), and a clean, modern UI. It uses Python (FastAPI) for the backend, TypeScript (React) for the frontend, PostgreSQL for the database, and Ollama for AI features, all configured via a config.yaml file.
 
 # Project Development Plan
 
@@ -16,8 +16,8 @@ The platform emphasizes modularity, multilingual support (Portuguese, English, J
 
 - [x] 1. Project Setup: Initialize monorepo, set up dependencies, create config.yaml.
 - [x] 2. Database Implementation: Design and migrate PostgreSQL schema with SQLAlchemy.
-- [ ] 3. Backend Development: Build RESTful APIs, JWT auth, RBAC, and Ollama integration.
-- [ ] 4. Frontend Development: React components, i18next, and Tailwind CSS styling.
+- [x] 3. Backend Development: Build RESTful APIs, JWT auth, RBAC, and Ollama integration.
+- [x] 4. Frontend Development: React components, i18next (pt/en/jp/es/fr/de/zh), and Tailwind CSS styling.
 - [ ] 5. AI Features: AI Tutor, Lesson Generator, AI Analytics.
 - [ ] 6. Dockerization: Dockerfiles for backend, frontend, DB, and Docker Compose.
 - [ ] 7. Testing: Unit and integration tests for backend and frontend.
@@ -53,7 +53,7 @@ Objective: Create a scalable database schema.
 Steps:
 Use PostgreSQL with SQLAlchemy for ORM.
 Define tables:
-users: id, role (student/teacher/admin), email, password_hash, time_zone, language (pt/en/jp).
+users: id, role (student/teacher/admin), email, password_hash, time_zone, language (pt/en/jp/es/fr/de/zh).
 classrooms: id, name, teacher_id, student_ids (array).
 grades: id, student_id, assignment_id, score, feedback.
 analytics: id, user_id, type (progress/engagement), data (JSON).
@@ -87,7 +87,7 @@ Implement retry logic and caching (Redis for AI responses).
 
 
 Add admin-only endpoints for user management and audit logs.
-Ensure APIs support multilingual error messages (pt/en/jp).
+Ensure APIs support multilingual error messages (pt/en/jp/es/fr/de/zh).
 
 
 
@@ -97,14 +97,14 @@ Objective: Create a responsive, multilingual UI with customizable styles.
 Steps:
 Set up React with TypeScript and Tailwind CSS.
 Implement components:
-Login Screen: Branded with FeverDucation logo, supports pt/en/jp.
+Login Screen: Branded with FeverDucation logo, supports pt/en/jp/es/fr/de/zh.
 Student Dashboard: Displays analytics, classrooms, grades, AI Tutor chat.
 Teacher Dashboard: Shows analytics, classroom management, lesson generator.
 Admin Dashboard: User management, audit logs, system status (local-only).
 
 
 Use i18next for multilingual support:
-Create JSON files: locales/pt.json, locales/en.json, locales/jp.json.
+Create JSON files: locales/pt.json, locales/en.json, locales/jp.json, locales/es.json, locales/fr.json, locales/de.json, locales/zh.json.
 Add language switcher in the UI (dropdown or flags).
 
 
@@ -178,7 +178,7 @@ Backend: Write unit tests with pytest for APIs and Ollama integration.
 Frontend: Use Jest and React Testing Library for component tests.
 Integration: Test API-frontend communication and language switching.
 Test CSS filter: Verify preset switching and custom CSS uploads.
-Validate multilingual support (pt/en/jp) and font rendering.
+Validate multilingual support (pt/en/jp/es/fr/de/zh) and font rendering.
 
 
 
@@ -215,7 +215,7 @@ Set up monitoring (Prometheus) and logging (Loki).
 
 User Testing:
 
-Test with sample users (student, teacher, admin) in pt/en/jp.
+Test with sample users (student, teacher, admin) in pt/en/jp/es/fr/de/zh.
 Verify AI features (Tutor, Lesson Generator, Analytics).
 Confirm CSS filter functionality and style customization.
 
@@ -258,7 +258,7 @@ Presets are defined in frontend/src/styles/presets/ (e.g., --primary-color, --fo
 
 Additional Details
 
-Languages: Support Portuguese (Brazil), English (US), and Japanese. Extendable via locales/ files.
+Languages: Support Portuguese (Brazil), English (US), Japanese, Spanish, French, German, and Chinese. Extendable via locales/ files.
 CSS Filter:
 Accessible in user management (admin/teacher roles).
 Options: Select preset, upload custom CSS, preview changes.
