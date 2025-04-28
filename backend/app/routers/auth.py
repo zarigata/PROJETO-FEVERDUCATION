@@ -88,7 +88,7 @@ class RegisterModel(BaseModel):
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 def register(data: RegisterModel, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == data.email).first():
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
     hashed = get_password_hash(data.password)
     user = User(email=data.email, password_hash=hashed, role=data.role)
     db.add(user)

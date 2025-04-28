@@ -28,10 +28,7 @@ function App() {
         )}
         <Route path="/student" element={
           <PrivateRoute role="student">
-            <div className="flex justify-between items-center p-2">
-              <LanguageSelector />
-              <StudentDashboard />
-            </div>
+            <StudentDashboard />
           </PrivateRoute>
         } />
         <Route path="/teacher" element={<PrivateRoute role="teacher"><TeacherDashboard /></PrivateRoute>} />
