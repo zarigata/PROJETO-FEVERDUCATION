@@ -9,7 +9,10 @@ const LANGUAGES = [
   { code: 'en', label: 'English', flag: 'US' },
   { code: 'pt', label: 'Português', flag: 'BR' },
   { code: 'jp', label: '日本語', flag: 'JP' },
-  // Add more languages as needed
+  { code: 'es', label: 'Español', flag: 'ES' },
+  { code: 'fr', label: 'Français', flag: 'FR' },
+  { code: 'de', label: 'Deutsch', flag: 'DE' },
+  { code: 'zh', label: '中文', flag: 'CN' },
 ];
 
 const LanguageSettings: React.FC = () => {
