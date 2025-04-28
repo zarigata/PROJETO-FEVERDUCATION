@@ -19,20 +19,35 @@ const AdminDashboard: React.FC = () => {
   const [status, setStatus] = useState<string>('');
   const [form, setForm] = useState({ email: '', password: '', role: 'student', timezone: 'UTC', language: 'en' });
   const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  // Filter users by email or name
+  const filteredUsers = users.filter(user =>
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch users independently
       try {
-        const [usersRes, logsRes, statusRes] = await Promise.all([
-          api.get('/users'),
-          api.get('/audit'),
-          api.get('/status'),
-        ]);
+        const usersRes = await api.get('/users');
         setUsers(usersRes.data);
+      } catch (err) {
+        console.error('Failed to load users:', err);
+      }
+      // Fetch audit logs
+      try {
+        const logsRes = await api.get('/audit');
         setLogs(logsRes.data);
+      } catch (err) {
+        console.error('Failed to load audit logs:', err);
+      }
+      // Fetch system status
+      try {
+        const statusRes = await api.get('/status');
         setStatus(JSON.stringify(statusRes.data, null, 2));
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load system status:', err);
       }
     };
     fetchData();
@@ -132,6 +147,16 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </form>
               )}
+              {/* Search users */}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder={t('search_users') as string}
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="border p-2 rounded w-full max-w-sm"
+                />
+              </div>
               <div className="overflow-x-auto mt-4">
                 <table className="min-w-full divide-y divide-[var(--border-color)] transition-colors duration-300">
                   <thead className="bg-[var(--bg-color)] transition-colors duration-300">
@@ -141,26 +166,26 @@ const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Role</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Timezone</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Language</th>
-<th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Classrooms</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Classrooms</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-color)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--card-bg)] divide-y divide-[var(--border-color)] transition-colors duration-300">
-                    {users.map(user => (
+                    {filteredUsers.map(user => (
                       <tr key={user.id} className="hover:bg-[var(--bg-color)] transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.role}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.timezone || 'UTC'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">{user.language || 'en'}</td>
-<td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
-  {/* CODEX: Show classrooms for each user */}
-  {user.role === 'teacher' && user.taught_classrooms && user.taught_classrooms.length > 0
-    ? user.taught_classrooms.map((c: any) => c.name).join(', ')
-    : user.classrooms && user.classrooms.length > 0
-      ? user.classrooms.map((c: any) => c.name).join(', ')
-      : <span className="opacity-60">-</span>}
-</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
+                          {/* CODEX: Show classrooms for each user */}
+                          {user.role === 'teacher' && user.taught_classrooms && user.taught_classrooms.length > 0
+                            ? user.taught_classrooms.map((c: any) => c.name).join(', ')
+                            : user.classrooms && user.classrooms.length > 0
+                              ? user.classrooms.map((c: any) => c.name).join(', ')
+                              : <span className="opacity-60">-</span>}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-color)]">
                           <button onClick={() => handleEditClick(user)} className="text-blue-500 mr-2">Edit</button>
                           <button onClick={() => deleteUser(user.id)} className="text-red-500">Delete</button>
